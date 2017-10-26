@@ -14,4 +14,4 @@ class Composite(Action):
 
     def __str__(self):
 
-        return "("+ ", ".join(map(str, self.actions)) +")"
+        return "("+ ". \n".join(map(str, self.actions)) +")"

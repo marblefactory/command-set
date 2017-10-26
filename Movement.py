@@ -12,7 +12,7 @@ class Speed(Enum):
     FAST = 2
 
     def __str__(self):
-        output = ["SLOW", "MID", "FAST"]
+        output = ["slowly", "", "quickly"]
         return output[self.value]
 
 
@@ -23,7 +23,7 @@ class Stance(Enum):
     STAND  = 2
 
     def __str__(self):
-        output = ["PRONE", "CROUCH", "STAND"]
+        output = ["crawl", "crouch", "walk"]
         return output[self.value]
 
 
@@ -34,7 +34,7 @@ class Direction(Enum):
     FORWARDS  = 3
 
     def __str__(self):
-        output = ["LEFT", "RIGHT", "BACKWARDS", "FORWARD"]
+        output = ["on the left", "on the right", "behind you", "straight ahead"]
         return output[self.value]
 
 
@@ -46,7 +46,7 @@ class Absolute(Location):
     pass
 
     def __str__(self):
-        return ""
+        return " in the building"
 
 
 class Contextual(Location):
@@ -58,7 +58,7 @@ class Contextual(Location):
         self.num = num
 
     def __str__(self):
-        return "(" + str(self.num)+ "," + str(self.direction) + ")"
+        return str(self.num+1)+ "th " + str(self.direction)
 
 
 class Object():
@@ -70,7 +70,7 @@ class Object():
         self.location = location
 
     def __str__(self):
-        return "(" + self.name + ", " + str(self.location) + ")"
+        return self.name + " which is " + str(self.location)
 
 
 class Relative(Object):
@@ -82,7 +82,14 @@ class Relative(Object):
         self.proportion = proportion
 
     def __str__(self):
-        return "("+ str(self.to) + ", " + str(self.proportion) +")"
+        if self.proportion > 0.8:
+            amount = "the end of"
+        elif 0.2 <= self.proportion <= 0.8:
+            amount = "half way along"
+        else:
+            amount = "a bit along"
+
+        return amount + " " + str(self.to)
 
 class StartPos(Enum):
     START = 0
@@ -128,4 +135,4 @@ class Move(Action):
         self.dest   = to
 
     def __str__ (self):
-        return "(" + str(self.dest) + ", " + str(self.speed) +", " + str(self.stance) + ")"
+        return str(self.speed) + " " + str(self.stance) + " to " + str(self.dest)
