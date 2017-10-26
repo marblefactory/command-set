@@ -4,7 +4,7 @@ TODO: Document
 
 from enum import Enum
 from Actions import Action
-
+from abc import ABC
 
 class Speed(Enum):
     SLOW = 1
@@ -18,18 +18,37 @@ class Stance(Enum):
     STAND  = 3
 
 
-class Relation(Enum):
-    SPECIFIC   = 1 # e.g. Room 256
-    CONTEXTUAL = 2 # e.g. that room
+class Direction(Enum):
+    LEFT      = 1
+    RIGHT     = 2
+    BACKWARDS = 3
+    FORWARDS  = 4
+
+
+class Location(ABC):
+    pass
+
+
+class Absolute(Location):
+    pass
+
+
+class Contextual(Location):
+    direction: Direction # e.g. on the right
+    num: int             # e.g. 3rd (door)
+
+    def __init__(self, direction: Direction = Direction.FORWARDS, num:int = 0):
+        self.direction = direction
+        self.num = num
 
 
 class Object():
     name    : str
-    relation: Relation
+    location: Location
 
-    def __init__(self, name:str, relation:Relation=Relation.CONTEXTUAL):
+    def __init__(self, name:str, location:Location=Contextual()):
         self.name     = name
-        self.relation = relation
+        self.location = location
 
 
 class Relative(Object):
@@ -43,7 +62,7 @@ class Relative(Object):
 
 class StartPos(Enum):
     START = 1
-    END  = 2
+    END   = 2
 
 
 class MemoryIndex():
@@ -64,11 +83,11 @@ class Rememebered(Object):
         self.index = index
 
 class Move(Action):
-    speed   : Speed
-    stance  : Stance
-    location: Object
+    speed : Speed
+    stance: Stance
+    dest  : Object
 
-    def __init__(self, location:Object, speed:Speed = Speed.MED, stance:Stance=Stance.STAND):
-        self.speed    = speed
-        self.stance   = stance
-        self.location = location
+    def __init__(self, to:Object, speed:Speed = Speed.MED, stance:Stance=Stance.STAND):
+        self.speed  = speed
+        self.stance = stance
+        self.dest   = to
