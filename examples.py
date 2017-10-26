@@ -28,3 +28,5 @@ m7 = Move(to=Rememebered(obj=Object('door'), index=MemoryIndex(StartPos.START, o
 
 # Go the the 2nd door on the right
 m8 = Move(to=Object('door', location=Contextual(direction=Direction.RIGHT, num=1)))
+
+print(m5)

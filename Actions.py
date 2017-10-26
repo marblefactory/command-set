@@ -11,3 +11,7 @@ class Composite(Action):
 
     def __init__(self, *actions):
         self.actions = actions
+
+    def __str__(self):
+
+        return "("+ ", ".join(map(str, self.actions)) +")"

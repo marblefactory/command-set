@@ -7,22 +7,35 @@ from Actions import Action
 from abc import ABC
 
 class Speed(Enum):
-    SLOW = 1
-    MED  = 2
-    FAST = 3
+    SLOW = 0
+    MED  = 1
+    FAST = 2
+
+    def __str__(self):
+        output = ["SLOW", "MID", "FAST"]
+        return output[self.value]
+
 
 
 class Stance(Enum):
-    PRONE  = 1
-    CROUCH = 2
-    STAND  = 3
+    PRONE  = 0
+    CROUCH = 1
+    STAND  = 2
+
+    def __str__(self):
+        output = ["PRONE", "CROUCH", "STAND"]
+        return output[self.value]
 
 
 class Direction(Enum):
-    LEFT      = 1
-    RIGHT     = 2
-    BACKWARDS = 3
-    FORWARDS  = 4
+    LEFT      = 0
+    RIGHT     = 1
+    BACKWARDS = 2
+    FORWARDS  = 3
+
+    def __str__(self):
+        output = ["LEFT", "RIGHT", "BACKWARDS", "FORWARD"]
+        return output[self.value]
 
 
 class Location(ABC):
@@ -31,6 +44,9 @@ class Location(ABC):
 
 class Absolute(Location):
     pass
+
+    def __str__(self):
+        return ""
 
 
 class Contextual(Location):
@@ -41,6 +57,9 @@ class Contextual(Location):
         self.direction = direction
         self.num = num
 
+    def __str__(self):
+        return "(" + str(self.num)+ "," + str(self.direction) + ")"
+
 
 class Object():
     name    : str
@@ -49,6 +68,9 @@ class Object():
     def __init__(self, name:str, location:Location=Contextual()):
         self.name     = name
         self.location = location
+
+    def __str__(self):
+        return "(" + self.name + ", " + str(self.location) + ")"
 
 
 class Relative(Object):
@@ -59,10 +81,16 @@ class Relative(Object):
         self.to         = to
         self.proportion = proportion
 
+    def __str__(self):
+        return "("+ str(self.to) + ", " + str(self.proportion) +")"
 
 class StartPos(Enum):
-    START = 1
-    END   = 2
+    START = 0
+    END   = 1
+
+    def __str__(self):
+        output = ["START", "END"]
+        return output[self.value]
 
 
 class MemoryIndex():
@@ -73,6 +101,9 @@ class MemoryIndex():
         self.offset = offset
         self.start = start
 
+    def __str__(self):
+        return "("+ str(self.start)+ ", "+ str(self.offset) +")"
+
 
 class Rememebered(Object):
     obj: Object
@@ -81,6 +112,10 @@ class Rememebered(Object):
     def __init__(self, obj:Object, index:MemoryIndex):
         self.obj = obj
         self.index = index
+
+    def __str__(self):
+        return "(" + str(self.obj) + ", " + str(self.index) + ")"
+
 
 class Move(Action):
     speed : Speed
@@ -91,3 +126,6 @@ class Move(Action):
         self.speed  = speed
         self.stance = stance
         self.dest   = to
+
+    def __str__ (self):
+        return "(" + str(self.dest) + ", " + str(self.speed) +", " + str(self.stance) + ")"
