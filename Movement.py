@@ -52,6 +52,42 @@ class Direction(Enum):
         return output[self.value]
 
 
+
+class StartPos(Enum):
+    """
+    Represents the direction of memory access in Rememebered objects.
+        eg. The first door you went in  -> START
+        eg. The Last door you went in   -> END
+    """
+    START = 0
+    END   = 1
+
+    def __str__(self):
+        """
+        Defines the string representation of a StartPos.
+        """
+        output = ["START", "END"]
+        return output[self.value]
+
+
+class MemoryIndex():
+    """
+    Represents an offset and a starting end of an array used to
+    stor the systems memory.
+    """
+    offset: int
+    start: StartPos
+
+    def __init__(self, start:StartPos, offset:int = 0):
+        self.offset = offset
+        self.start = start
+
+    def __str__(self):
+        """
+        Defines the string representation of a MemoryIndex.
+        """
+        return "("+ str(self.start)+ ", "+ str(self.offset) +")"
+
 class Location(ABC):
     """
     The abstract Location class.
@@ -90,6 +126,23 @@ class Contextual(Location):
         Defines the string representation Contextual location.
         """
         return str(self.num+1)+ "th " + str(self.direction)
+
+class Rememebered(Location):
+    """
+    Represents an Location that has been visited before, and hense can be moved
+    'back' to, for example.
+    """
+    loc   : Location
+    index : MemoryIndex
+
+    def __init__(self, index:MemoryIndex):
+        self.index    = index
+
+    def __str__(self):
+        """
+        Defines the string representation of a Rememebered Object.
+        """
+        return "(" + str(self.index) + ")"
 
 
 class Object():
@@ -136,59 +189,10 @@ class Relative(Object):
 
         return amount + " " + str(self.to)
 
-class StartPos(Enum):
-    """
-    Represents the direction of memory access in Rememebered objects.
-        eg. The first door you went in  -> START
-        eg. The Last door you went in   -> END
-    """
-    START = 0
-    END   = 1
-
-    def __str__(self):
-        """
-        Defines the string representation of a StartPos.
-        """
-        output = ["START", "END"]
-        return output[self.value]
 
 
-class MemoryIndex():
-    """
-    Represents an offset and a starting end of an array used to
-    stor the systems memory.
-    """
-    offset: int
-    start: StartPos
-
-    def __init__(self, start:StartPos, offset:int = 0):
-        self.offset = offset
-        self.start = start
-
-    def __str__(self):
-        """
-        Defines the string representation of a MemoryIndex.
-        """
-        return "("+ str(self.start)+ ", "+ str(self.offset) +")"
 
 
-class Rememebered(Location):
-    """
-    Represents an Location that has been visited before, and hense can be moved
-    'back' to, for example.
-    """
-    loc   : Location
-    index : MemoryIndex
-
-    def __init__(self, location:Location, index:MemoryIndex):
-        self.location = location
-        self.index    = index
-
-    def __str__(self):
-        """
-        Defines the string representation of a Rememebered Object.
-        """
-        return "(" + str(self.location) + ", " + str(self.index) + ")"
 
 
 class Move(Action):
