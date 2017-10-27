@@ -172,23 +172,23 @@ class MemoryIndex():
         return "("+ str(self.start)+ ", "+ str(self.offset) +")"
 
 
-class Rememebered(Object):
+class Rememebered(Location):
     """
-    Represents an Object that has been visited before, and hense can be moved
+    Represents an Location that has been visited before, and hense can be moved
     'back' to, for example.
     """
-    obj   : Object
+    loc   : Location
     index : MemoryIndex
 
-    def __init__(self, obj:Object, index:MemoryIndex):
-        self.obj = obj
-        self.index = index
+    def __init__(self, location:Location, index:MemoryIndex):
+        self.location = location
+        self.index    = index
 
     def __str__(self):
         """
         Defines the string representation of a Rememebered Object.
         """
-        return "(" + str(self.obj) + ", " + str(self.index) + ")"
+        return "(" + str(self.location) + ", " + str(self.index) + ")"
 
 
 class Move(Action):
