@@ -19,8 +19,6 @@ class Speed(Enum):
         return output[self.value]
 
 
-
-
 class Stance(Enum):
     """
     Represents the different stances that the user can specify.
@@ -52,7 +50,6 @@ class Direction(Enum):
         """
         output = ["on the left", "on the right", "behind you", "straight ahead"]
         return output[self.value]
-
 
 
 class StartPos(Enum):
@@ -110,8 +107,6 @@ class Contextual(Location):
         Defines the string representation Contextual location.
         """
         return str(self.num+1)+ "th " + str(self.direction)
-
-
 
 
 class Rememebered(Location):
@@ -180,12 +175,7 @@ class Relative(Object):
             amount = "a bit along"
 
         return amount + " " + str(self.to)
-
-
-
-
-
-
+        
 
 class Move(Action):
     """

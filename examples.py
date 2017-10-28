@@ -1,10 +1,10 @@
 from Actions import *
 from Movement import *
 
-# ############
-# # Movement #
-# ############
-#
+############
+# Movement #
+############
+
 print("\nMovement examples:")
 
 # Run half way down the corridor
@@ -38,6 +38,7 @@ print(m7)
 # Go the the 4th door on the right
 m8 = Move(to=Object('door', location=Contextual(direction=Direction.RIGHT, num=3)))
 print(m8)
+
 
 ############
 # JSON     #

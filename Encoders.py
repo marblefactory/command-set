@@ -1,9 +1,7 @@
 import json
-from enum import Enum
-# from abc import ABC
-
+from enum     import Enum
 from Movement import *
-from Actions import *
+from Actions  import *
 
 
 class EnumEncoder(json.JSONEncoder):
@@ -32,7 +30,6 @@ class LocationEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-# TODO Encoder for the Absolute class
 class AbsoluteEncoder(LocationEncoder):
     """
     Encodes an Absolute Location in JSON format
@@ -43,6 +40,7 @@ class AbsoluteEncoder(LocationEncoder):
                 'type'     : 'absolute'
             }
         return json.JSONEncoder.default(self, obj)
+
 
 class ContextualEncoder(LocationEncoder):
     """
@@ -57,6 +55,7 @@ class ContextualEncoder(LocationEncoder):
             }
         return json.JSONEncoder.default(self, obj)
 
+
 class RememberedEncoder(LocationEncoder):
     """
     Encodes a Rememebered Location in JSON format
@@ -69,6 +68,7 @@ class RememberedEncoder(LocationEncoder):
                 'offset'   : obj.offset
             }
         return json.JSONEncoder.default(self, obj)
+
 
 class ObjectEncoder(json.JSONEncoder):
     """
@@ -85,6 +85,7 @@ class ObjectEncoder(json.JSONEncoder):
             }
 
         return json.JSONEncoder.default(self, obj)
+
 
 class RelativeEncoder(ObjectEncoder):
     """
@@ -114,6 +115,7 @@ class ActionEncoder(json.JSONEncoder):
             return json.loads(json.dumps(obj, cls=CompositeEncoder))
         return json.JSONEncoder.default(self, obj)
 
+
 class CompositeEncoder(ActionEncoder):
     """
     Encodes a Composite Action in JSON format
@@ -126,6 +128,7 @@ class CompositeEncoder(ActionEncoder):
             }
         return json.JSONEncoder.default(self, obj)
 
+
 class MoveEncoder(ActionEncoder):
     """
     Encodes a Move in JSON format
@@ -134,9 +137,9 @@ class MoveEncoder(ActionEncoder):
         if isinstance(obj, Move):
             return {
                 'type'      : 'move',
-                'speed'     : json.loads(json.dumps(obj.speed,cls=EnumEncoder)),
+                'speed'     : json.loads(json.dumps(obj.speed, cls=EnumEncoder)),
                 'stance'    : json.loads(json.dumps(obj.stance,cls=EnumEncoder)),
-                'dest'      : json.loads(json.dumps(obj.dest, cls=ObjectEncoder))
+                'dest'      : json.loads(json.dumps(obj.dest,  cls=ObjectEncoder))
             }
 
         return json.JSONEncoder.default(self, obj)
