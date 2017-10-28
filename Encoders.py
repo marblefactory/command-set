@@ -1,8 +1,9 @@
 import json
 from enum import Enum
-from abc import ABC
+# from abc import ABC
 
 from Movement import *
+from Actions import *
 
 
 class EnumEncoder(json.JSONEncoder):
@@ -15,7 +16,7 @@ class EnumEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class LocationEncoder(json.JSONEncoder, ABC):
+class LocationEncoder(json.JSONEncoder):
     """
     The Abstract Location Encoder
 
@@ -28,6 +29,8 @@ class LocationEncoder(json.JSONEncoder, ABC):
             return json.loads(json.dumps(obj, cls=RememberedEncoder))
         elif isinstance(obj, Absolute):
             return json.loads(json.dumps(obj, cls=AbsoluteEncoder))
+        return json.JSONEncoder.default(self, obj)
+
 
 # TODO Encoder for the Absolute class
 class AbsoluteEncoder(LocationEncoder):
@@ -72,10 +75,68 @@ class ObjectEncoder(json.JSONEncoder):
     Encodes an Object in JSON format
     """
     def default(self, obj):
+        if isinstance(obj, Relative):
+            return json.loads(json.dumps(obj, cls=RelativeEncoder))
         if isinstance(obj, Object):
             return {
+                'type'     : 'standard',
                 'name'     : obj.name,
                 'location' : json.loads(json.dumps(obj.location, cls=LocationEncoder))
+            }
+
+        return json.JSONEncoder.default(self, obj)
+
+class RelativeEncoder(ObjectEncoder):
+    """
+    Encodes an Object in JSON format
+    """
+    def default(self, obj):
+        if isinstance(obj, Relative):
+            return {
+                'type'      : 'relative',
+                'to'        : json.loads(json.dumps(obj.to, cls=ObjectEncoder)),
+                'proportion': obj.proportion
+            }
+
+        return json.JSONEncoder.default(self, obj)
+
+
+class ActionEncoder(json.JSONEncoder):
+    """
+    The Abstract Action Encoder
+
+    Used to get the type of the objet and call the relevant encoder.
+    """
+    def default(self, obj):
+        if isinstance(obj, Move):
+            return json.loads(json.dumps(obj, cls=MoveEncoder))
+        elif isinstance(obj, Composite):
+            return json.loads(json.dumps(obj, cls=CompositeEncoder))
+        return json.JSONEncoder.default(self, obj)
+
+class CompositeEncoder(ActionEncoder):
+    """
+    Encodes a Composite Action in JSON format
+    """
+    def default(self, obj):
+        if isinstance(obj, Composite):
+            return {
+                'type'      : 'composite',
+                'actions'   : [json.loads(json.dumps(encodedAction,cls=ActionEncoder)) for encodedAction in obj.actions]
+            }
+        return json.JSONEncoder.default(self, obj)
+
+class MoveEncoder(ActionEncoder):
+    """
+    Encodes a Move in JSON format
+    """
+    def default(self, obj):
+        if isinstance(obj, Move):
+            return {
+                'type'      : 'move',
+                'speed'     : json.loads(json.dumps(obj.speed,cls=EnumEncoder)),
+                'stance'    : json.loads(json.dumps(obj.stance,cls=EnumEncoder)),
+                'dest'      : json.loads(json.dumps(obj.dest, cls=ObjectEncoder))
             }
 
         return json.JSONEncoder.default(self, obj)
