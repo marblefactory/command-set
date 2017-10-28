@@ -111,12 +111,9 @@ class Contextual(Location):
 
 class Rememebered(Location):
     """
-    Represents an Location that has been visited before, and hense can be moved
-    'back' to, for example.
-    """
-    """
-    Represents an offset and a starting end of an array used to
-    stor the systems memory.
+    A location that has been visited before, and hense can be moved
+    'back' to. Represented by an offset, and a starting end of an array,
+    which are used to index the spy's memory.
     """
     offset: int
     start: StartPos
