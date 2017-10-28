@@ -2,6 +2,7 @@ from enum import Enum
 from Actions import Action
 from abc import ABC
 
+
 class Speed(Enum):
     """
     Represents the differnt speeds that the user can specify.
@@ -16,7 +17,6 @@ class Speed(Enum):
         """
         output = ["slowly", "", "quickly"]
         return output[self.value]
-
 
 
 class Stance(Enum):
@@ -50,7 +50,6 @@ class Direction(Enum):
         """
         output = ["on the left", "on the right", "behind you", "straight ahead"]
         return output[self.value]
-
 
 
 class StartPos(Enum):
@@ -101,13 +100,14 @@ class Contextual(Location):
 
     def __init__(self, direction: Direction = Direction.FORWARDS, num:int = 0):
         self.direction = direction
-        self.num = num
+        self.num       = num
 
     def __str__(self):
         """
         Defines the string representation Contextual location.
         """
         return str(self.num+1)+ "th " + str(self.direction)
+
 
 class Rememebered(Location):
     """
@@ -172,12 +172,7 @@ class Relative(Object):
             amount = "a bit along"
 
         return amount + " " + str(self.to)
-
-
-
-
-
-
+        
 
 class Move(Action):
     """

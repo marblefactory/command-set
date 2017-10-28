@@ -5,6 +5,8 @@ from Movement import *
 # Movement #
 ############
 
+print("\nMovement examples:")
+
 # Run half way down the corridor
 m1 = Move(to=Relative(to=Object('corridor'), proportion=0.5), speed=Speed.FAST)
 print(m1)
@@ -36,3 +38,21 @@ print(m7)
 # Go the the 4th door on the right
 m8 = Move(to=Object('door', location=Contextual(direction=Direction.RIGHT, num=3)))
 print(m8)
+
+
+############
+# JSON     #
+############
+from Encoders import *
+import json
+
+print("\nJSON examples:")
+
+print("Absolute Location       : " + json.dumps(Absolute(), cls=LocationEncoder))
+print("Contextual Location     : " + json.dumps(Contextual(), cls=LocationEncoder))
+print("Rememebered Location    : " + json.dumps(Rememebered(StartPos.END), cls=LocationEncoder))
+print("Object with Contextual  : " + json.dumps(Object(name='door'), cls=ObjectEncoder))
+print("Object with Rememebered : " + json.dumps(Object(name='door', location=Rememebered(StartPos.END)), cls=ObjectEncoder))
+print("Relative Object         : " + json.dumps(Relative(to=Object(name='door', location=Rememebered(StartPos.END)), proportion=0.5), cls=ObjectEncoder))
+print("Move Action             : " + json.dumps(Move(to=Object('door', location=Contextual(direction=Direction.RIGHT))), cls=ActionEncoder))
+print("Composite Action        : " + json.dumps(Composite(Move(to=Object('room 812', location=Absolute()), stance=Stance.PRONE), Move(to=Object('desk'), stance=Stance.PRONE)), cls=ActionEncoder))
