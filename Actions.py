@@ -32,4 +32,4 @@ class Composite(Action):
         """
         The string representation of an Action Composite.
         """
-        return ",\nthen ".join(map(str, self.actions)) 
+        return ". Then ".join(map(str, self.actions)) 

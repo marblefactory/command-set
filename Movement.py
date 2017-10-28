@@ -70,24 +70,6 @@ class StartPos(Enum):
         return output[self.value]
 
 
-class MemoryIndex():
-    """
-    Represents an offset and a starting end of an array used to
-    stor the systems memory.
-    """
-    offset: int
-    start: StartPos
-
-    def __init__(self, start:StartPos, offset:int = 0):
-        self.offset = offset
-        self.start = start
-
-    def __str__(self):
-        """
-        Defines the string representation of a MemoryIndex.
-        """
-        return "("+ str(self.start)+ ", "+ str(self.offset) +")"
-
 class Location(ABC):
     """
     The abstract Location class.
@@ -132,17 +114,22 @@ class Rememebered(Location):
     Represents an Location that has been visited before, and hense can be moved
     'back' to, for example.
     """
-    loc   : Location
-    index : MemoryIndex
+    """
+    Represents an offset and a starting end of an array used to
+    stor the systems memory.
+    """
+    offset: int
+    start: StartPos
 
-    def __init__(self, index:MemoryIndex):
-        self.index    = index
+    def __init__(self, start:StartPos, offset:int = 0):
+        self.offset = offset
+        self.start = start
 
     def __str__(self):
         """
         Defines the string representation of a Rememebered Object.
         """
-        return "(" + str(self.index) + ")"
+        return " the " + str(self.offset+1) + "th object from the " + str(self.start) + " I remember."
 
 
 class Object():

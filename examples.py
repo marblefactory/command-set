@@ -18,7 +18,7 @@ m3 = Move(to=Object('room 812', location=Absolute()))
 print(m3)
 
 # Go back to the last door
-m4 = Move(to=Object(name='door', location=Rememebered(index=MemoryIndex(start=StartPos.END, offset=0))))
+m4 = Move(to=Object(name='door', location=Rememebered(start=StartPos.END, offset=0)))
 print(m4)
 
 # Go Prone behind the grey desk in room 812
@@ -30,7 +30,7 @@ m6 = Move(to=Object('door', location=Contextual(direction=Direction.RIGHT)))
 print(m6)
 
 # Go back to the 2nd doors you came
-m7 = Move(to=Object(name='door', location=Rememebered(index=MemoryIndex(StartPos.START, offset=1))))
+m7 = Move(to=Object(name='door', location=Rememebered(start=StartPos.START, offset=1)))
 print(m7)
 
 # Go the the 4th door on the right
