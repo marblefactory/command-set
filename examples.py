@@ -47,5 +47,8 @@ import json
 
 print("\nJSON examples:")
 
-tester = Contextual()
-print(json.dumps(tester, cls=ContextualEncoder))
+print("Absolute Location       : " + json.dumps(Absolute(), cls=LocationEncoder))
+print("Contextual Location     : " + json.dumps(Contextual(), cls=LocationEncoder))
+print("Rememebered Location    : " + json.dumps(Rememebered(StartPos.END), cls=LocationEncoder))
+print("Object with Contextual  : " + json.dumps(Object(name='door'), cls=ObjectEncoder))
+print("Object with Rememebered : " + json.dumps(Object(name='door', location=Rememebered(StartPos.END)), cls=ObjectEncoder))
