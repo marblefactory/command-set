@@ -32,3 +32,10 @@ class Composite(Action):
         The string representation of an Action Composite.
         """
         return ". Then ".join(map(str, self.actions))
+
+
+class Stop(Action):
+    """
+    Represents an action that tells the spy to stop whatever they're doing.
+    """
+    pass
