@@ -13,7 +13,7 @@ m1 = Move(to=Relative(to=Object('corridor'), proportion=0.5), speed=Speed.FAST)
 print(m1)
 
 # Slowly crawl to the end of the room
-m2 = Move(to=Relative(to=Object('room')), speed=Speed.SLOW, stance=Speed.SLOW)
+m2 = Move(to=Relative(to=Object('room')), speed=Speed.SLOW, stance=Stance.CROUCH)
 print(m2)
 
 # Walk to office 811
