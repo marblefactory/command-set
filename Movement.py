@@ -4,6 +4,7 @@ from abc import ABC
 from enum import Enum
 
 
+
 class Speed(Enum):
     """
     Represents the differnt speeds that the user can specify.
@@ -34,6 +35,7 @@ class Stance(Enum):
         """
         output = ["crawl", "crouch", "walk"]
         return output[self.value]
+
 
 class Move(Action):
     """
