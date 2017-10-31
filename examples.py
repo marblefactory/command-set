@@ -1,5 +1,6 @@
-from Actions import *
-from Movement import *
+from objects import *
+from actions import *
+from movement import *
 
 ############
 # Movement #
@@ -14,11 +15,12 @@ m2 = Move(to=Relative(to=Object('room')), speed=Speed.SLOW, stance=Speed.SLOW)
 print(m2)
 
 # Walk to office 811
-m3 = Move(to=Object('room 812', location=Absolute()))
+m3 = Move(to=Object('room 812',
+          location=Absolute()))
 print(m3)
 
 # Go back to the last door
-m4 = Move(to=Object(name='door', location=Rememebered(start=StartPos.END, offset=0)))
+m4 = Move(to=Object(name='door', location=Rememebered(iteration_dir=MemoryIterationDirection.END_TO_START, offset=0)))
 print(m4)
 
 # Go Prone behind the grey desk in room 812
@@ -30,7 +32,7 @@ m6 = Move(to=Object('door', location=Contextual(direction=Direction.RIGHT)))
 print(m6)
 
 # Go back to the 2nd doors you came
-m7 = Move(to=Object(name='door', location=Rememebered(start=StartPos.START, offset=1)))
+m7 = Move(to=Object(name='door', location=Rememebered(iteration_dir=MemoryIterationDirection.START_TO_END, offset=1)))
 print(m7)
 
 # Go the the 4th door on the right

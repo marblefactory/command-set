@@ -2,15 +2,14 @@ from abc import ABC
 from typing import Tuple
 
 
-
 class Action(ABC):
     """
     An abstract class that all things that can be composed together must
     instanciate.
-
         eg. Move, Interact, etc.
     """
     pass
+
 
 class Composite(Action):
     """
@@ -32,4 +31,4 @@ class Composite(Action):
         """
         The string representation of an Action Composite.
         """
-        return ". Then ".join(map(str, self.actions)) 
+        return ". Then ".join(map(str, self.actions))
