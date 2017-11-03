@@ -58,3 +58,44 @@ print("Object with Rememebered : " + json.dumps(Object(name='door', location=Rem
 print("Relative Object         : " + json.dumps(Relative(to=Object(name='door', location=Rememebered(MemoryIterationDirection.END_TO_START)), proportion=0.5), cls=ObjectEncoder))
 print("Move Action             : " + json.dumps(Move(to=Object('door', location=Contextual(direction=Direction.RIGHT))), cls=ActionEncoder))
 print("Composite Action        : " + json.dumps(Composite(Move(to=Object('room 812', location=Absolute()), stance=Stance.PRONE), Move(to=Object('desk'), stance=Stance.PRONE)), cls=ActionEncoder))
+
+############################
+# Basic Movement Answers   #
+############################
+
+# Through the door in in fromt of you
+scenario1  = None
+
+# In the room on your right
+scenario2  = None
+
+# In the room on your right
+scenario3  = None
+
+# Through the door on your right
+scenario4  = None
+
+# Behind the desk
+scenario5  = None
+
+# Go inside on your left
+scenario6  = None
+
+# Around the corner
+scenario7  = None
+
+# In the room on your left
+scenario8  = None
+
+
+scenario9  = None
+scenario10 = None
+
+
+
+
+
+
+
+
+#
