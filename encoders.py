@@ -80,7 +80,7 @@ class ObjectEncoder(json.JSONEncoder):
             return json.loads(json.dumps(obj, cls=RelativeEncoder))
         if isinstance(obj, Object):
             return {
-                'type'     : 'standard',
+                'type'     : 'object',
                 'name'     : obj.name,
                 'location' : json.loads(json.dumps(obj.location, cls=LocationEncoder))
             }
