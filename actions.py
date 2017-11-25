@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import Tuple
+import numpy as np
 
 
 class Action(ABC):
@@ -9,6 +10,10 @@ class Action(ABC):
         eg. Move, Interact, etc.
     """
     pass
+
+    @classmethod
+    def from_tensor(tensor: ):
+        pass
 
 
 class Composite(Action):
