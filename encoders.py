@@ -1,8 +1,9 @@
 import json
 from enum     import Enum
 from objects import *
-from movement import *
+from movements import *
 from actions  import *
+from locations import *
 
 
 class EnumEncoder(json.JSONEncoder):
