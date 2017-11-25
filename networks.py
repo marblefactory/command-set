@@ -21,7 +21,7 @@ class Movement_NN():
         """
         t = np.zeros(shape=(6,1), dtype=np.bool_)
         t[self.med]   = np.True_
-        t[self.stand] = np.True_
+        t[self.prone] = np.True_
         return t
 
 class Location_NN():

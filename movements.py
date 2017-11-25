@@ -1,8 +1,11 @@
-from actions import Action
-from objects import Object
-from abc import ABC
-from enum import Enum
+from actions  import Action
+from objects  import Object
+from abc      import ABC
+from enum     import Enum
+from networks import Movement_NN
+
 import numpy as np
+
 
 class Speed(Enum):
     """
@@ -16,12 +19,18 @@ class Speed(Enum):
         """
         Defines the string representation of a Speed.
         """
-        output = ["slowly", "", "quickly"]
+        output = ["slowly", "normally", "quickly"]
         return output[self.value]
 
     @classmethod
-    def from_tensor_and_text(cls, tensor: np.ndarray, text: str):
-        return Speed.MED
+    def from_tensor(cls, tensor: np.ndarray):
+        xs = [
+            (Movement_NN.slow, Speed.SLOW),
+            (Movement_NN.med,  Speed.MED),
+            (Movement_NN.fast, Speed.FAST)
+        ]
+
+        return [speed for i, speed in xs if tensor[i]][0]
 
 
 class Stance(Enum):
@@ -40,8 +49,14 @@ class Stance(Enum):
         return output[self.value]
 
     @classmethod
-    def from_tensor_and_text(cls, tensor: np.ndarray, text: str):
-        return Stance.STAND
+    def from_tensor(cls, tensor: np.ndarray):
+        xs = [
+            (Movement_NN.prone, Stance.PRONE),
+            (Movement_NN.crouch,  Stance.CROUCH),
+            (Movement_NN.stand, Stance.STAND)
+        ]
+
+        return [stance for i, stance in xs if tensor[i]][0]
 
 
 class Move(Action):
@@ -67,9 +82,7 @@ class Move(Action):
     def from_tensor_and_text(cls, tensor: np.ndarray, text: str):
 
         obj    = Object.from_tensor_and_text(tensor, text)
-        stance = Stance.from_tensor_and_text(tensor, text)
-        speed  = Speed.from_tensor_and_text(tensor, text)
+        stance = Stance.from_tensor(tensor)
+        speed  = Speed.from_tensor(tensor)
 
         return  cls(to=obj, speed=speed, stance=stance)
-
-print(Move.from_tensor_and_text('dfd', '456789'))
