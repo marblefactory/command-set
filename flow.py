@@ -5,7 +5,7 @@ import json
 
 print("\nMovement flow\n")
 
-text   = "run down the corridor"
+text   = "go to room 102a and then .."
 print('Input text:"' + text + '"')
 
 tensor = Movement_NN().run(text)

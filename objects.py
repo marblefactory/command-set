@@ -2,6 +2,7 @@ from abc import ABC
 from enum import Enum
 from locations import Location, Contextual
 import numpy as np
+import text_processing
 
 class Object():
     """
@@ -23,10 +24,9 @@ class Object():
 
     @classmethod
     def from_tensor_and_text(cls, tensor: np.ndarray, text:str):
-        name     = "table"
+        name     = text_processing.name_in(text)
         location = Location.from_tensor_and_text(tensor, text)
         return cls(name=name, location=location)
-
 
 
 class Relative(Object):
