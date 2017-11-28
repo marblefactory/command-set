@@ -1,7 +1,9 @@
-from networks import Movement_NN
+from networks  import Movement_NN
 from movements import Move
-from encoders import MoveEncoder
+from encoders  import MoveEncoder
+from client    import Client
 import json
+
 
 print("\nMovement flow\n")
 
@@ -16,3 +18,8 @@ print('Move: "' + str(move) + '"')
 
 data = json.dumps(move, cls=MoveEncoder)
 print('JSON: ' + str(data))
+
+
+client = Client()
+
+client.send("Albie is a piece of shit")
