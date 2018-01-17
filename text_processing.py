@@ -1,5 +1,6 @@
 import nltk
-from typing import Callable, List
+from typing import List
+import itertools
 
 
 def name_in(text: str):
@@ -83,9 +84,6 @@ class DAnd(Descriptor):
         word_descriptors = [DWord(word) for word in words]
         return DAnd(word_descriptors)
 
-    def response(self, text: str) -> int:
-        return sum([descriptor.response(text) for descriptor in self.ds])
-
 
 class DPositional(Descriptor):
     """
@@ -96,8 +94,8 @@ class DPositional(Descriptor):
         """
         :return: 1 if any positional word is present in the text, or 0 if none are present.
         """
-        nums = ['first', 'second', 'third', 'fourth', 'next']
-        and_response = DAnd.from_words(nums).response(text)
+        positional_words = ['first', 'second', 'third', 'fourth', 'next']
+        and_response = DAnd.from_words(positional_words).response(text)
         return int(and_response >= 1)
 
 

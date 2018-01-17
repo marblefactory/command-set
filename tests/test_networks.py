@@ -55,7 +55,7 @@ class LocationNetworkTestCase(unittest.TestCase):
         """
         Tests for a high response for a contextual location.
         """
-        sentence = 'Take first on your left'
+        sentence = 'Take first door on your left'
 
         vec = LocationNN().run(sentence)
         expected = np.array([0, 1, 0])
