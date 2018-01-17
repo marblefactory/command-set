@@ -7,7 +7,7 @@ class Client():
         self.HOST = HOST
         self.PORT = PORT
 
-    def _wrap(message: str):
+    def _wrap(self, message: str):
         """
         Wraps the message in the appropriate envolope for sending.
         eg:
@@ -16,9 +16,9 @@ class Client():
         # TODO What wrapper do I need?
         return message+"$"
 
-    def send(message:str, stateless=True):
+    def send(self, message:str, stateless=True):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((self.HOST, self.PORT))
-            sock.sendall(bytes(_wrap(data), "utf-8"))
+            sock.sendall(self._wrap(message).encode())
             if not stateless:
                 return str(sock.recv(1024, "utf-8"))

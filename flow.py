@@ -20,6 +20,6 @@ data = json.dumps(move, cls=MoveEncoder)
 print('JSON: ' + str(data))
 
 
-client = Client()
+client = Client(PORT=1024)
 
-client.send("Albie is a piece of shit")
+client.send(data)
