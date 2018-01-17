@@ -4,7 +4,6 @@ from networks import descriptor_vector, LocationNN, MovementNN
 import numpy as np
 
 
-
 class MockDescriptor(Descriptor):
     """
     Returns the supplied response for every string.

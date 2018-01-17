@@ -1,6 +1,5 @@
 import nltk
 from typing import List
-import itertools
 
 
 def name_in(text: str):
@@ -57,10 +56,10 @@ class DWord(Descriptor):
         """
         self.word = word
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         """
         :return: the number of occurrences of `word` in the text.
-        """
+        """g
         matched_words = [w for w in text.split() if w == self.word]
         return len(matched_words)
 
@@ -84,7 +83,7 @@ class DAnd(Descriptor):
         word_descriptors = [DWord(word) for word in words]
         return DAnd(word_descriptors)
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         return sum([descriptor.response(text) for descriptor in self.ds])
 
 
@@ -93,7 +92,7 @@ class DPositional(Descriptor):
     Matches on positional words, e.g. next, first, second, etc.
     """
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         """
         :return: 1 if any positional word is present in the text, or 0 if none are present.
         """
@@ -110,7 +109,7 @@ class DXOR(Descriptor):
         self.d1 = d1
         self.d2 = d2
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         d1_resp = self.d1.response(text)
         d2_resp = self.d2.response(text)
 
@@ -129,7 +128,7 @@ class DWordTag(Descriptor):
     def __init__(self, tag: str):
         self.tag = tag
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         """
         :return: the number of words matching the tag in the text.
         """
@@ -153,7 +152,7 @@ class DNot(Descriptor):
     def __init__(self, descriptors: List[Descriptor]):
         self.ds = descriptors
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         """
         :return: 1 if **all** other descriptors give no a response, otherwise 0.
         """
