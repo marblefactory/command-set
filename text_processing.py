@@ -1,5 +1,6 @@
 import nltk
 from typing import List
+from nltk.corpus import wordnet as wn
 
 
 def name_in(text: str):
@@ -45,26 +46,70 @@ class Descriptor:
         raise NotImplementedError
 
 
-class DWord(Descriptor):
+class Word(Descriptor):
+    """
+    Matches based on individual words in a text.
+    """
+    word: str
+
+    def __init__(self, word: str):
+        """
+        :param word: the word to be matched over the text.
+        """
+        self.word = word
+
+    @classmethod
+    def list_from_words(cls, words: List[str]) -> List['Word']:
+        """
+        :return: a list of word descriptors from the list of words.
+        """
+        return [cls(word) for word in words]
+
+
+class WordMatch(Word):
     """
     Matches on words in a text.
     """
 
     def __init__(self, word: str):
-        """
-        :param word: the word to be matched in the text.
-        """
-        self.word = word
+        super(WordMatch, self).__init__(word)
 
     def response(self, text: str) -> float:
         """
         :return: the number of occurrences of `word` in the text.
-        """g
+        """
         matched_words = [w for w in text.split() if w == self.word]
         return len(matched_words)
 
 
-class DAnd(Descriptor):
+class WordMeaning(Word):
+    """
+    Generates a response based on semantic similarity between words.
+    """
+
+    def __init__(self, word: str):
+        super(WordMeaning, self).__init__(word)
+
+    def response(self, text: str) -> float:
+        def similarity(synset1, synset2) -> float:
+            """
+            :return: the maximum semantic similarity between the two synsets.
+            """
+            maximum = 0
+            for s1 in synset1:
+                for s2 in synset2:
+                    sim = s1.path_similarity(s2) or 0
+                    maximum = sim if sim > maximum else maximum
+
+            return maximum
+
+        word_synsets = wn.synsets(self.word)
+        sentence_synsets = [wn.synsets(w) for w in text.split()]
+        similarities = [similarity(word_synsets, synsets) for synsets in sentence_synsets]
+        return sum(similarities)
+
+
+class And(Descriptor):
     """
     Matches on multiple conditions in a text.
     """
@@ -75,19 +120,11 @@ class DAnd(Descriptor):
         """
         self.ds = descriptors
 
-    @classmethod
-    def from_words(cls, words: List[str]) -> 'DAnd':
-        """
-        :return: a DAnd descriptor which matches on the given words.
-        """
-        word_descriptors = [DWord(word) for word in words]
-        return DAnd(word_descriptors)
-
     def response(self, text: str) -> float:
         return sum([descriptor.response(text) for descriptor in self.ds])
 
 
-class DPositional(Descriptor):
+class Positional(Descriptor):
     """
     Matches on positional words, e.g. next, first, second, etc.
     """
@@ -97,11 +134,12 @@ class DPositional(Descriptor):
         :return: 1 if any positional word is present in the text, or 0 if none are present.
         """
         positional_words = ['first', 'second', 'third', 'fourth', 'next']
-        and_response = DAnd.from_words(positional_words).response(text)
+        words = WordMatch.list_from_words(positional_words)
+        and_response = And(words).response(text)
         return int(and_response >= 1)
 
 
-class DXOR(Descriptor):
+class XOR(Descriptor):
     """
     Models an XOR gate, where if both descriptors match, there is a response of zero.
     """
@@ -113,14 +151,14 @@ class DXOR(Descriptor):
         d1_resp = self.d1.response(text)
         d2_resp = self.d2.response(text)
 
-        if (d1_resp == 0):
+        if d1_resp == 0:
             return d2_resp
-        elif (d2_resp == 0):
+        elif d2_resp == 0:
             return d1_resp
         return 0
 
 
-class DWordTag(Descriptor):
+class WordTag(Descriptor):
     """
     Matches on words with the given NLTK tag.
     """
@@ -135,16 +173,16 @@ class DWordTag(Descriptor):
         return len(nltk_tagged(self.tag, text))
 
 
-class DNumber(DWordTag):
+class Number(WordTag):
     """
     Matches on numbers (e.g. 102) in a text.
     """
 
     def __init__(self):
-        super(DNumber, self).__init__('CD') # Matches on Cardinal Numbers.
+        super(Number, self).__init__('CD')  # Matches on Cardinal Numbers.
 
 
-class DNot(Descriptor):
+class Not(Descriptor):
     """
     Matches on the text if the other descriptors don't match, i.e. give a response of zero.
     """

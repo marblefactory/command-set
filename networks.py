@@ -1,4 +1,3 @@
-
 import numpy as np
 from text_processing import *
 from typing import List
@@ -30,39 +29,39 @@ class MovementNN():
         """
         :return: a descriptor which produces a high response for slow movement.
         """
-        return DWord('slowly')
+        return WordMatch('slowly')
 
     def med_descriptor(self) -> Descriptor:
         """
         :return: a descriptor which produces a high response for medium/normal movement
                  i.e. when there is no response for slow or fast.
         """
-        return DNot([self.slow_descriptor(), self.fast_descriptor()])
+        return Not([self.slow_descriptor(), self.fast_descriptor()])
 
     def fast_descriptor(self) -> Descriptor:
         """
         :return: a descriptor which produces a high response for fast movement.
         """
-        return DWord('quickly')
+        return WordMatch('quickly')
 
     def prone_descriptor(self) -> Descriptor:
         """
         :return: a descriptor which produces a high response for a prone stance.
         """
-        return DWord('prone')
+        return WordMatch('prone')
 
     def crouch_descriptor(self) -> Descriptor:
         """
         :return: a descriptor which produces a high response for crouched stance.
         """
-        return DAnd([DWord('crouched'), DWord('crouching')])
+        return And([WordMatch('crouched'), WordMatch('crouching')])
 
     def stand_descriptor(self) -> Descriptor:
         """
         :return: a descriptor which produces a high response for a standing stance.
                  i.e. when there is no response for prone or crouching.
         """
-        return DNot([self.prone_descriptor(), self.crouch_descriptor()])
+        return Not([self.prone_descriptor(), self.crouch_descriptor()])
 
     def run(self, input_text: str):
         """
@@ -97,21 +96,21 @@ class LocationNN():
         """
         :return: a descriptor which produces a high response for absolute locations, e.g. Room 102
         """
-        return DAnd([DWord('room'), DNumber()])
+        return And([WordMatch('room'), Number()])
 
     def contextual_descriptor(self) -> Descriptor:
         """
         :return: a descriptor which produces a high response for contextual locations, e.g. first door on the left
         """
-        left_right = DXOR(DWord('left'), DWord('right'))
-        return DAnd([DPositional(), DWordTag('NN'), left_right])
+        left_right = XOR(WordMatch('left'), WordMatch('right'))
+        return And([Positional(), WordTag('NN'), left_right])
 
     def directional_descriptor(self) -> Descriptor:
         """
         :return: a descriptor which produces a high response for directions, e.g. left, right, forwards, backwards
         """
-        words = ['left', 'right', 'forwards', 'backwards']
-        return DAnd.from_words(words)
+        words = WordMatch.list_from_words(['left', 'right', 'forwards', 'backwards'])
+        return And(words)
 
 
     def run(self, input_text: str):

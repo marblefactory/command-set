@@ -7,7 +7,7 @@ class WordDistanceMeasureTestCase(unittest.TestCase):
     """
 
     def descriptor(self):
-        return DWord('hello')
+        return WordMatch('hello')
 
     def test_no_response(self):
         assert self.descriptor().response('my sentence') == 0
@@ -25,7 +25,8 @@ class AndDistanceMeasureTestCase(unittest.TestCase):
     """
 
     def descriptor(self):
-        return DAnd.from_words(['hello', 'world'])
+        words = WordMatch.list_from_words(['hello', 'world'])
+        return And(words)
 
     def test_no_response(self):
         assert self.descriptor().response('my sentence') == 0
@@ -52,7 +53,7 @@ class PositionalDistanceMeasureTestCase(unittest.TestCase):
     """
 
     def descriptor(self):
-        return DPositional()
+        return Positional()
 
     def test_no_response(self):
         assert self.descriptor().response('take the door') == 0
@@ -73,7 +74,7 @@ class WordTagDistanceMeasureTestCase(unittest.TestCase):
         """
         :return: a descriptor which matches on nouns.
         """
-        return DWordTag('NN')
+        return WordTag('NN')
 
     def test_no_response(self):
         assert self.descriptor().response('flying') == 0
@@ -91,7 +92,7 @@ class NumberDistanceMeasureTestCase(unittest.TestCase):
     """
 
     def descriptor(self):
-        return DNumber()
+        return Number()
 
     def test_no_response(self):
         assert self.descriptor().response('number') == 0
@@ -109,7 +110,7 @@ class XORDistanceMeasureTestCase(unittest.TestCase):
     """
 
     def descriptor(self):
-        return DXOR(DWord('left'), DWord('right'))
+        return XOR(WordMatch('left'), WordMatch('right'))
 
     def test_no_response(self):
         assert self.descriptor().response('go forwards') == 0
@@ -130,7 +131,7 @@ class NotDistanceMeasureTestCase(unittest.TestCase):
     """
 
     def descriptor(self):
-        return DNot([DWord('hello'), DWord('world')])
+        return Not([WordMatch('hello'), WordMatch('world')])
 
     def test_no_response1(self):
         assert self.descriptor().response('hello') == 0
