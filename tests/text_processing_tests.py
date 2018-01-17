@@ -3,7 +3,7 @@ from text_processing import *
 
 class WordDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests the `d_word` function.
+    Tests DWord
     """
 
     def descriptor(self):
@@ -21,11 +21,11 @@ class WordDistanceMeasureTestCase(unittest.TestCase):
 
 class AndDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests the `d_and` function.
+    Tests DAnd
     """
 
     def descriptor(self):
-        return DAnd([DWord('hello'), DWord('world')])
+        return DAnd.from_words(['hello', 'world'])
 
     def test_no_response(self):
         assert self.descriptor().response('my sentence') == 0
@@ -48,7 +48,7 @@ class AndDistanceMeasureTestCase(unittest.TestCase):
 
 class PositionalDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests the `d_positional` function.
+    Tests DPositional
     """
 
     def descriptor(self):
@@ -64,9 +64,30 @@ class PositionalDistanceMeasureTestCase(unittest.TestCase):
         assert self.descriptor().response('take the first second door') == 1
 
 
+class WordTagDistanceMeasureTestCase(unittest.TestCase):
+    """
+    Tests DWordTag
+    """
+
+    def descriptor(self):
+        """
+        :return: a descriptor which matches on nouns.
+        """
+        return DWordTag('NN')
+
+    def test_no_response(self):
+        assert self.descriptor().response('flying') == 0
+
+    def test_single(self):
+        assert self.descriptor().response('flying car') == 1
+
+    def test_multiple(self):
+        assert self.descriptor().response('flying car table') == 2
+
+
 class NumberDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests the `d_number` function.
+    Tests DNumber
     """
 
     def descriptor(self):
@@ -84,7 +105,7 @@ class NumberDistanceMeasureTestCase(unittest.TestCase):
 
 class XORDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests the `d_xor` function.
+    Tests DXOR
     """
 
     def descriptor(self):

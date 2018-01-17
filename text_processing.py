@@ -42,7 +42,7 @@ class Descriptor:
         """
         :return: the response of the descriptor on the text.
         """
-        pass
+        raise NotImplementedError
 
 
 class DWord(Descriptor):
@@ -75,36 +75,30 @@ class DAnd(Descriptor):
         """
         self.ds = descriptors
 
+    @classmethod
+    def from_words(cls, words: List[str]) -> 'DAnd':
+        """
+        :return: a DAnd descriptor which matches on the given words.
+        """
+        word_descriptors = [DWord(word) for word in words]
+        return DAnd(word_descriptors)
+
     def response(self, text: str) -> int:
         return sum([descriptor.response(text) for descriptor in self.ds])
 
 
 class DPositional(Descriptor):
     """
-    Matches on positional words, e.g. first, second, etc.
+    Matches on positional words, e.g. next, first, second, etc.
     """
 
     def response(self, text: str) -> int:
         """
         :return: 1 if any positional word is present in the text, or 0 if none are present.
         """
-        nums = ['first', 'second', 'third', 'fourth']
-        word_descriptors = [DWord(word) for word in nums]
-        and_response = DAnd(word_descriptors).response(text)
+        nums = ['first', 'second', 'third', 'fourth', 'next']
+        and_response = DAnd.from_words(nums).response(text)
         return int(and_response >= 1)
-
-
-class DNumber(Descriptor):
-    """
-    Matches on numbers (e.g. 102) in a text.
-    """
-
-    def response(self, text: str) -> int:
-        """
-        :return: the number of numbers (e.g. 102) in the text.
-        """
-        numbers = nltk_tagged('CD', text)  # Tagged with Cardinal Number
-        return len(numbers)
 
 
 class DXOR(Descriptor):
@@ -124,3 +118,27 @@ class DXOR(Descriptor):
         elif (d2_resp == 0):
             return d1_resp
         return 0
+
+
+class DWordTag(Descriptor):
+    """
+    Matches on words with the given NLTK tag.
+    """
+
+    def __init__(self, tag: str):
+        self.tag = tag
+
+    def response(self, text: str) -> int:
+        """
+        :return: the number of words matching the tag in the text.
+        """
+        return len(nltk_tagged(self.tag, text))
+
+
+class DNumber(DWordTag):
+    """
+    Matches on numbers (e.g. 102) in a text.
+    """
+
+    def __init__(self):
+        super(DNumber, self).__init__('CD') # Matches on Cardinal Numbers.
