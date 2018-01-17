@@ -1,6 +1,6 @@
 import unittest
 from text_processing import Descriptor
-from networks import descriptor_vector, LocationNN
+from networks import descriptor_vector, LocationNN, MovementNN
 import numpy as np
 
 
@@ -28,7 +28,7 @@ class DescriptorVectorTestCase(unittest.TestCase):
         assert np.array_equal(vec, expected)
 
 
-class LocationNetworkTestCase(unittest.TestCase):
+class LocationNNTestCase(unittest.TestCase):
     def test_absolute(self):
         """
         Tests for a high response for an absolute location.
@@ -70,5 +70,73 @@ class LocationNetworkTestCase(unittest.TestCase):
 
         vec = LocationNN().run(sentence)
         expected = np.array([0, 0, 1])
+
+        assert np.array_equal(vec, expected)
+
+
+class MovementNNTestCase(unittest.TestCase):
+    def test_slow(self):
+        """
+        Tests for a high response for moving slowly.
+        """
+        sentence = 'go slowly to the end of the corridor'
+
+        vec = MovementNN().run(sentence)
+        expected = np.array([1, 0, 0, 0, 0, 1])
+
+        assert np.array_equal(vec, expected)
+
+    def test_med(self):
+        """
+        Tests for a high response for moving normally.
+        """
+        sentence = 'go to the end of the corridor'
+
+        vec = MovementNN().run(sentence)
+        expected = np.array([0, 1, 0, 0, 0, 1])
+
+        assert np.array_equal(vec, expected)
+
+    def test_fast(self):
+        """
+        Tests for a high response for moving quickly.
+        """
+        sentence = 'go quickly to the end of the corridor'
+
+        vec = MovementNN().run(sentence)
+        expected = np.array([0, 0, 1, 0, 0, 1])
+
+        assert np.array_equal(vec, expected)
+
+    def test_prone(self):
+        """
+        Tests for a high response for a prone stance.
+        """
+        sentence = 'go prone to the end of the corridor'
+
+        vec = MovementNN().run(sentence)
+        expected = np.array([0, 1, 0, 1, 0, 0])
+
+        assert np.array_equal(vec, expected)
+
+    def test_crouch(self):
+        """
+        Tests for a high response for a crouched stance.
+        """
+        sentence = 'move crouched to the end of the corridor'
+
+        vec = MovementNN().run(sentence)
+        expected = np.array([0, 1, 0, 0, 1, 0])
+
+        assert np.array_equal(vec, expected)
+
+    def test_stand(self):
+        """
+        Tests for a high response for a standing stance.
+        """
+        sentence = 'go to the end of the corridor'
+
+        vec = MovementNN().run(sentence)
+        expected = np.array([0, 1, 0, 0, 0, 1])
 
         assert np.array_equal(vec, expected)

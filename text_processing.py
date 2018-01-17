@@ -84,6 +84,9 @@ class DAnd(Descriptor):
         word_descriptors = [DWord(word) for word in words]
         return DAnd(word_descriptors)
 
+    def response(self, text: str) -> int:
+        return sum([descriptor.response(text) for descriptor in self.ds])
+
 
 class DPositional(Descriptor):
     """
@@ -140,3 +143,20 @@ class DNumber(DWordTag):
 
     def __init__(self):
         super(DNumber, self).__init__('CD') # Matches on Cardinal Numbers.
+
+
+class DNot(Descriptor):
+    """
+    Matches on the text if the other descriptors don't match, i.e. give a response of zero.
+    """
+
+    def __init__(self, descriptors: List[Descriptor]):
+        self.ds = descriptors
+
+    def response(self, text: str) -> int:
+        """
+        :return: 1 if **all** other descriptors give no a response, otherwise 0.
+        """
+        responses = [descriptor.response(text) for descriptor in self.ds]
+        was_response = [r != 0 for r in responses]
+        return int(not any(was_response))

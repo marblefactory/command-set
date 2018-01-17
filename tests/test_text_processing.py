@@ -122,3 +122,27 @@ class XORDistanceMeasureTestCase(unittest.TestCase):
 
     def test_multiple(self):
         assert self.descriptor().response('go left right') == 0
+
+
+class NotDistanceMeasureTestCase(unittest.TestCase):
+    """
+    Tests DNot
+    """
+
+    def descriptor(self):
+        return DNot([DWord('hello'), DWord('world')])
+
+    def test_no_response1(self):
+        assert self.descriptor().response('hello') == 0
+
+    def test_no_response2(self):
+        assert self.descriptor().response('world') == 0
+
+    def test_no_response3(self):
+        assert self.descriptor().response('hello the world is blue') == 0
+
+    def test_response(self):
+        assert self.descriptor().response('no matched words in here') == 1
+
+    def test_response_if_empty(self):
+        assert self.descriptor().response('') == 1

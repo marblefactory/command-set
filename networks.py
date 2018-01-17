@@ -26,7 +26,45 @@ class MovementNN():
     crouch = 4
     stand  = 5
 
-    def run(self, input_text):
+    def slow_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for slow movement.
+        """
+        return DWord('slowly')
+
+    def med_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for medium/normal movement
+                 i.e. when there is no response for slow or fast.
+        """
+        return DNot([self.slow_descriptor(), self.fast_descriptor()])
+
+    def fast_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for fast movement.
+        """
+        return DWord('quickly')
+
+    def prone_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for a prone stance.
+        """
+        return DWord('prone')
+
+    def crouch_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for crouched stance.
+        """
+        return DAnd([DWord('crouched'), DWord('crouching')])
+
+    def stand_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for a standing stance.
+                 i.e. when there is no response for prone or crouching.
+        """
+        return DNot([self.prone_descriptor(), self.crouch_descriptor()])
+
+    def run(self, input_text: str):
         """
         Returns a tensor:
         [ Slow   ]
@@ -36,10 +74,22 @@ class MovementNN():
         [ Crouch ]
         [ Stand  ]
         """
-        t = np.zeros(shape=(6,1), dtype=np.bool_)
-        t[self.med]   = np.True_
-        t[self.prone] = np.True_
-        return t
+        speed_descriptors = [
+            self.slow_descriptor(),
+            self.med_descriptor(),
+            self.fast_descriptor()
+        ]
+
+        stance_descriptors = [
+            self.prone_descriptor(),
+            self.crouch_descriptor(),
+            self.stand_descriptor()
+        ]
+
+        speed_vec = descriptor_vector(speed_descriptors, input_text)
+        stance_vec = descriptor_vector(stance_descriptors, input_text)
+
+        return np.append(speed_vec, stance_vec)
 
 
 class LocationNN():
