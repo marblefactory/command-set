@@ -109,9 +109,9 @@ class LocationNN():
 
     def directional_descriptor(self) -> Descriptor:
         """
-        :return: a descriptor which produces a high response for directions, e.g. left, right, forwards, backwards
+        :return: a descriptor which produces a high response for directions, e.g. forwards, backwards
         """
-        words = WordMatch.list_from_words(['left', 'right', 'forwards', 'backwards'])
+        words = WordMatch.list_from_words(['forwards', 'backwards'])
         return And(words)
 
 

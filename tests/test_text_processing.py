@@ -130,7 +130,7 @@ class WordTagDistanceMeasureTestCase(unittest.TestCase):
         assert self.descriptor().response('flying car') == 1
 
     def test_multiple(self):
-        assert self.descriptor().response('flying car table') == 2
+        assert self.descriptor().response('flying car table') == 1
 
 
 class NumberDistanceMeasureTestCase(unittest.TestCase):

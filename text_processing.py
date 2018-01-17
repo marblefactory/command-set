@@ -39,7 +39,7 @@ class Descriptor:
     Produces a response when applied to a text.
     """
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         """
         :return: the response of the descriptor on the text.
         """
@@ -195,7 +195,8 @@ class WordTag(Descriptor):
         """
         :return: the number of words matching the tag in the text.
         """
-        return len(nltk_tagged(self.tag, text))
+        num_tagged = len(nltk_tagged(self.tag, text))
+        return float(num_tagged >= 1)
 
 
 class Number(WordTag):
@@ -221,4 +222,4 @@ class Not(Descriptor):
         """
         responses = [descriptor.response(text) for descriptor in self.ds]
         was_response = [r != 0 for r in responses]
-        return int(not any(was_response))
+        return float(not any(was_response))
