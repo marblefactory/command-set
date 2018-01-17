@@ -7,7 +7,7 @@ import json
 
 print("\nMovement flow\n")
 
-text   = "go to room 102a and then .."
+text   = "go to the door on the right"
 print('Input text:"' + text + '"')
 
 tensor = Movement_NN().run(text)
@@ -20,6 +20,6 @@ data = json.dumps(move, cls=MoveEncoder)
 print('JSON: ' + str(data))
 
 
-client = Client(PORT=1024)
-
-client.send(data)
+# client = Client(PORT=1024)
+#
+# client.send(data)
