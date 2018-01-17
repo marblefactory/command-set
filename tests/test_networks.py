@@ -8,10 +8,10 @@ class MockDescriptor(Descriptor):
     """
     Returns the supplied response for every string.
     """
-    def __init__(self, response: int):
+    def __init__(self, response: float):
         self.r = response
 
-    def response(self, text: str) -> int:
+    def response(self, text: str) -> float:
         return self.r
 
 

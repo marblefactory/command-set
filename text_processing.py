@@ -46,6 +46,21 @@ class Descriptor:
         raise NotImplementedError
 
 
+class Threshold(Descriptor):
+    """
+    Produces a response when the given descriptor produces a response over or equal to a threshold.
+    """
+    def __init__(self, descriptor: Descriptor, threshold: float):
+        self.descriptor = descriptor
+        self.threshold = threshold
+
+    def response(self, text: str) -> float:
+        """
+        :return: the response of the descriptor if the response is over a threshold, otherwise 0.
+        """
+        return 1 if self.descriptor.response(text) >= self.threshold else 0
+
+
 class Word(Descriptor):
     """
     Matches based on individual words in a text.
@@ -121,41 +136,51 @@ class And(Descriptor):
         self.ds = descriptors
 
     def response(self, text: str) -> float:
-        return sum([descriptor.response(text) for descriptor in self.ds])
+        """
+        :return: the average response from all descriptors.
+        """
+        l = float(len(self.ds))
+        return sum([descriptor.response(text) / l for descriptor in self.ds])
 
 
-class Positional(Descriptor):
+class OneOf(Descriptor):
+    """
+    Matches only if one descriptor matches.
+    """
+
+    def __init__(self, descriptors: List[Descriptor]):
+        """
+        :param descriptors: the list of descriptors to match. There must be at least 2.
+        """
+
+        assert len(descriptors) >= 2
+
+        self.ds = descriptors
+
+    def response(self, text: str) -> float:
+        """
+        :return: the value of descriptor D if D is the only descriptor to give a non-zero response, otherwise 0.
+        """
+        responses = sorted([descriptor.response(text) for descriptor in self.ds])
+
+        # If the second to last element is zero, it means either there was a response from only one descriptor, or
+        # no descriptors responded.
+        if responses[-2] == 0:
+            return responses[-1]
+
+        return 0
+
+
+class Positional(OneOf):
     """
     Matches on positional words, e.g. next, first, second, etc.
     """
 
-    def response(self, text: str) -> float:
-        """
-        :return: 1 if any positional word is present in the text, or 0 if none are present.
-        """
-        positional_words = ['first', 'second', 'third', 'fourth', 'next']
-        words = WordMatch.list_from_words(positional_words)
-        and_response = And(words).response(text)
-        return int(and_response >= 1)
+    def __init__(self):
+        words = ['next', 'first', 'second', 'third', 'fourth']
+        ds = WordMatch.list_from_words(words)
 
-
-class XOR(Descriptor):
-    """
-    Models an XOR gate, where if both descriptors match, there is a response of zero.
-    """
-    def __init__(self, d1: Descriptor, d2: Descriptor):
-        self.d1 = d1
-        self.d2 = d2
-
-    def response(self, text: str) -> float:
-        d1_resp = self.d1.response(text)
-        d2_resp = self.d2.response(text)
-
-        if d1_resp == 0:
-            return d2_resp
-        elif d2_resp == 0:
-            return d1_resp
-        return 0
+        super(Positional, self).__init__(ds)
 
 
 class WordTag(Descriptor):

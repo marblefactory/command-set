@@ -1,9 +1,38 @@
 import unittest
 from text_processing import *
 
-class WordDistanceMeasureTestCase(unittest.TestCase):
+
+class MockDescriptor(Descriptor):
     """
-    Tests DWord
+    Returns the supplied response for every string.
+    """
+    def __init__(self, response: float):
+        self.r = response
+
+    def response(self, text: str) -> float:
+        return self.r
+
+
+class ThresholdDistanceMeasureTestCase(unittest.TestCase):
+    """
+    Tests Threshold
+    """
+    def descriptor(self, value: float):
+        return Threshold(MockDescriptor(value), 0.5)
+
+    def test_below_threshold(self):
+        assert self.descriptor(0.1).response(' ') == 0
+
+    def test_on_threshold(self):
+        assert self.descriptor(0.5).response(' ') == 1
+
+    def test_above_threshold(self):
+        assert self.descriptor(0.7).response(' ') == 1
+
+
+class WordMatchDistanceMeasureTestCase(unittest.TestCase):
+    """
+    Tests WordMatch
     """
 
     def descriptor(self):
@@ -19,9 +48,27 @@ class WordDistanceMeasureTestCase(unittest.TestCase):
         assert self.descriptor().response('hello world hello') == 2
 
 
+class WordMeaningDistanceMeasureTestCase(unittest.TestCase):
+    """
+    Tests WordMeaning
+    """
+
+    def descriptor(self):
+        return WordMeaning('crouching')
+
+    def test_single_small(self):
+        assert self.descriptor().response('go') == 0.25
+
+    def test_single_large(self):
+        assert self.descriptor().response('crouching') == 1.0
+
+    def test_multiple(self):
+        assert self.descriptor().response('crouch crouching') == 2.0
+
+
 class AndDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests DAnd
+    Tests And
     """
 
     def descriptor(self):
@@ -32,24 +79,24 @@ class AndDistanceMeasureTestCase(unittest.TestCase):
         assert self.descriptor().response('my sentence') == 0
 
     def test_single(self):
-        assert self.descriptor().response('hello sentence') == 1
+        assert self.descriptor().response('hello sentence') == 0.5
 
     def test_single_rorder_invariant(self):
-        assert self.descriptor().response('sentence hello') == 1
+        assert self.descriptor().response('sentence hello') == 0.5
 
     def test_multiple(self):
-        assert self.descriptor().response('hello world') == 2
+        assert self.descriptor().response('hello world') == 1
 
     def test_multiple_order_invariant(self):
-        assert self.descriptor().response('world hello') == 2
+        assert self.descriptor().response('world hello') == 1
 
     def test_extra_word_invariant(self):
-        assert self.descriptor().response('hello extra world extra') == 2
+        assert self.descriptor().response('hello extra world extra') == 1
 
 
 class PositionalDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests DPositional
+    Tests Positional
     """
 
     def descriptor(self):
@@ -62,12 +109,12 @@ class PositionalDistanceMeasureTestCase(unittest.TestCase):
         assert self.descriptor().response('take the first door') == 1
 
     def test_multiple(self):
-        assert self.descriptor().response('take the first second door') == 1
+        assert self.descriptor().response('take the first second door') == 0
 
 
 class WordTagDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests DWordTag
+    Tests WordTag
     """
 
     def descriptor(self):
@@ -88,7 +135,7 @@ class WordTagDistanceMeasureTestCase(unittest.TestCase):
 
 class NumberDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests DNumber
+    Tests Number
     """
 
     def descriptor(self):
@@ -104,13 +151,13 @@ class NumberDistanceMeasureTestCase(unittest.TestCase):
         assert self.descriptor().response('Room 802 and 700') == 2
 
 
-class XORDistanceMeasureTestCase(unittest.TestCase):
+class OneOfDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests DXOR
+    Tests OneOf
     """
 
     def descriptor(self):
-        return XOR(WordMatch('left'), WordMatch('right'))
+        return OneOf([WordMatch('left'), WordMatch('right')])
 
     def test_no_response(self):
         assert self.descriptor().response('go forwards') == 0
@@ -127,7 +174,7 @@ class XORDistanceMeasureTestCase(unittest.TestCase):
 
 class NotDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests DNot
+    Tests Not
     """
 
     def descriptor(self):
