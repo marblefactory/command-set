@@ -33,55 +33,94 @@ def nltk_tagged(tag: str, text: str) -> List[str]:
     return [word for (word, word_tag) in tagged if word_tag == tag]
 
 
-def d_word(word: str) -> Callable[[str], int]:
+class Descriptor:
     """
-    :return: the number of occurrences of `word` in the text.
+    Produces a response when applied to a text.
     """
-    def result(text: str):
-        matched_words = [w for w in text.split() if w == word]
+
+    def response(self, text: str) -> int:
+        """
+        :return: the response of the descriptor on the text.
+        """
+        pass
+
+
+class DWord(Descriptor):
+    """
+    Matches on words in a text.
+    """
+
+    def __init__(self, word: str):
+        """
+        :param word: the word to be matched in the text.
+        """
+        self.word = word
+
+    def response(self, text: str) -> int:
+        """
+        :return: the number of occurrences of `word` in the text.
+        """
+        matched_words = [w for w in text.split() if w == self.word]
         return len(matched_words)
 
-    return result
 
-
-def d_and(functions: List[Callable[[str], int]]) -> Callable[[str], int]:
+class DAnd(Descriptor):
     """
-    :return: the addition of the responses of the supplied functions on the text.
+    Matches on multiple conditions in a text.
     """
-    def result(text: str):
-        return sum([func(text) for func in functions])
 
-    return result
+    def __init__(self, descriptors: List[Descriptor]):
+        """
+        :param descriptors: the descriptors for which the responses will be summed.
+        """
+        self.ds = descriptors
 
-
-def d_positional(text: str) -> int:
-    """
-    :return: 1 if any positional words (e.g. 'first') occurs in the text, otherwise returns 0.
-    """
-    nums = ['first', 'second', 'third', 'fourth']
-    words = [d_word(word) for word in nums]
-    return int(d_and(words)(text) >= 1)
+    def response(self, text: str) -> int:
+        return sum([descriptor.response(text) for descriptor in self.ds])
 
 
-def d_number(text: str) -> int:
+class DPositional(Descriptor):
     """
-    :return: the number of occurrences of numbers (e.g. '802') in the text.
+    Matches on positional words, e.g. first, second, etc.
     """
-    numbers = nltk_tagged('CD', text) # Tagged with Cardinal Number
-    return len(numbers)
+
+    def response(self, text: str) -> int:
+        """
+        :return: 1 if any positional word is present in the text, or 0 if none are present.
+        """
+        nums = ['first', 'second', 'third', 'fourth']
+        word_descriptors = [DWord(word) for word in nums]
+        and_response = DAnd(word_descriptors).response(text)
+        return int(and_response >= 1)
 
 
-def d_xor(f: Callable[[str], int], g: Callable[[str], int]) -> Callable[[str], int]:
+class DNumber(Descriptor):
     """
-    Models an XOR gate.
-    :return: 0 if both the functions give a positive response on the text. Or, returns the response of `f` on the text
-             if `g` gives a response of 0, and vice versa.
+    Matches on numbers (e.g. 102) in a text.
     """
-    def result(text: str):
-        if (f(text) == 0):
-            return g(text)
-        elif (g(text) == 0):
-            return f(text)
+
+    def response(self, text: str) -> int:
+        """
+        :return: the number of numbers (e.g. 102) in the text.
+        """
+        numbers = nltk_tagged('CD', text)  # Tagged with Cardinal Number
+        return len(numbers)
+
+
+class DXOR(Descriptor):
+    """
+    Models an XOR gate, where if both descriptors match, there is a response of zero.
+    """
+    def __init__(self, d1: Descriptor, d2: Descriptor):
+        self.d1 = d1
+        self.d2 = d2
+
+    def response(self, text: str) -> int:
+        d1_resp = self.d1.response(text)
+        d2_resp = self.d2.response(text)
+
+        if (d1_resp == 0):
+            return d2_resp
+        elif (d2_resp == 0):
+            return d1_resp
         return 0
-
-    return result
