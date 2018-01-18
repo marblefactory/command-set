@@ -11,8 +11,6 @@ def descriptor_vector(descriptors: List[Descriptor], text: str) -> np.array:
     responses = [d.normalised_response(text) for d in descriptors]
     index = responses.index(max(responses))
 
-    print(responses)
-
     vec = np.zeros(shape=len(descriptors))
     vec[index] = 1
 
@@ -156,7 +154,3 @@ class LocationNN():
         ]
 
         return descriptor_vector(descriptors, input_text)
-
-
-sentence = 'move into the next room'
-print(LocationNN().run(sentence))
