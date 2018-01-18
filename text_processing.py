@@ -167,6 +167,26 @@ class And(Descriptor):
         return sum([descriptor.max_response() for descriptor in self.ds])
 
 
+class All(Descriptor):
+    """
+    Matches only if all descriptors match.
+    """
+
+    def __init__(self, descriptors: List[Descriptor]):
+        self.ds = descriptors
+
+    def response(self, text: str) -> float:
+        """
+        :return: 1 if **all** other descriptors give a response, otherwise 0.
+        """
+        responses = [descriptor.response(text) for descriptor in self.ds]
+        was_response = [r != 0 for r in responses]
+        return float(all(was_response))
+
+    def max_response(self) -> float:
+        return 1
+
+
 class OneOf(Descriptor):
     """
     Matches only if one descriptor matches.
@@ -252,7 +272,7 @@ class Not(Descriptor):
 
     def response(self, text: str) -> float:
         """
-        :return: 1 if **all** other descriptors give no a response, otherwise 0.
+        :return: 1 if **all** other descriptors give a response, otherwise 0.
         """
         responses = [descriptor.response(text) for descriptor in self.ds]
         was_response = [r != 0 for r in responses]

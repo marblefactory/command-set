@@ -8,8 +8,10 @@ def descriptor_vector(descriptors: List[Descriptor], text: str) -> np.array:
     :return: a one-hot vector with a 1 at the position with the descriptor with the largest response on `text`.
              The vector is nx1, where n is the number of descriptors.
     """
-    responses = [d.response(text) for d in descriptors]
+    responses = [d.normalised_response(text) for d in descriptors]
     index = responses.index(max(responses))
+
+    print(responses)
 
     vec = np.zeros(shape=len(descriptors))
     vec[index] = 1
@@ -96,11 +98,11 @@ class LocationNN():
         """
         :return: a descriptor which produces a high response for absolute locations, e.g. Room 102
         """
-        return And([WordMatch('room'), Number()])
+        return All([WordMatch('room'), Number()])
 
     def contextual_descriptor(self) -> Descriptor:
         """
-        :return: a descriptor which produces a high response for contextual locations, e.g. first door on the left
+        :return: a descriptor which produces a high response for contextual locations, e.g. first door on your left
         """
         direction_words = ['left', 'right', 'behind', 'front']
         directions = OneOf(WordMatch.list_from_words(direction_words))
@@ -119,12 +121,19 @@ class LocationNN():
         """
         :return: a descriptor which produces a high response for stairs, e.g. go upstairs
         """
-        words = WordMatch.list_from_words(['upstairs', 'downstairs'])
-        return And(words)
+
+        # Either 'go up the stairs' or 'go down the stairs'
+        up_down = OneOf(WordMatch.list_from_words(['up', 'down']))
+        up_down_stairs = And([up_down, WordMatch('stairs')])
+
+        # Either 'go upstairs' or `go downstairs'
+        up_down_stairs_compound = OneOf(WordMatch.list_from_words(['upstairs', 'downstairs']))
+
+        return OneOf([up_down_stairs, up_down_stairs_compound])
 
     def behind_obj_descriptor(self) -> Descriptor:
         """
-        :return: a descriptor which produces a high response for going behind an object, e.g. go behind the sofas
+        :return: a descriptor which produces a high response for going behind an object, e.g. go behind the sofa
         """
         return And([WordMatch('behind'), WordTag('NN')])
 
@@ -147,3 +156,7 @@ class LocationNN():
         ]
 
         return descriptor_vector(descriptors, input_text)
+
+
+sentence = 'move into the next room'
+print(LocationNN().run(sentence))

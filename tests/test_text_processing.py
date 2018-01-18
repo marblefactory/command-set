@@ -227,3 +227,24 @@ class NotDistanceMeasureTestCase(unittest.TestCase):
 
     def test_normalised_response(self):
         assert self.descriptor().normalised_response('no matched words') == 1
+
+
+class AllDistanceMeasureTestCase(unittest.TestCase):
+    """
+    Tests All
+    """
+
+    def descriptor(self):
+        return All(WordMatch.list_from_words(['hello', 'world']))
+
+    def test_no_response1(self):
+        assert self.descriptor().response('nothing') == 0
+
+    def test_no_response2(self):
+        assert self.descriptor().response('hello') == 0
+
+    def test_no_response3(self):
+        assert self.descriptor().response('word') == 0
+
+    def test_response(self):
+        assert self.descriptor().response('hello world') == 1
