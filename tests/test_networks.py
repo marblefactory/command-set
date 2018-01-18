@@ -14,12 +14,15 @@ class MockDescriptor(Descriptor):
     def response(self, text: str) -> float:
         return self.r
 
+    def max_response(self) -> float:
+        return 1
+
 
 class DescriptorVectorTestCase(unittest.TestCase):
     def test_descriptor_vector(self):
         d0 = MockDescriptor(0)
-        d1 = MockDescriptor(1)
-        d2 = MockDescriptor(2)
+        d1 = MockDescriptor(0.5)
+        d2 = MockDescriptor(1)
 
         vec = descriptor_vector([d0, d1, d2], 'some text')
         expected = np.array([0, 0, 1])
@@ -35,7 +38,7 @@ class LocationNNTestCase(unittest.TestCase):
         sentence = 'Go forwards to room 506'
 
         vec = LocationNN().run(sentence)
-        expected = np.array([1, 0, 0])
+        expected = np.array([1, 0, 0, 0, 0])
 
         assert np.array_equal(vec, expected)
 
@@ -46,7 +49,7 @@ class LocationNNTestCase(unittest.TestCase):
         sentence = 'Take the door on your left'
 
         vec = LocationNN().run(sentence)
-        expected = np.array([0, 1, 0])
+        expected = np.array([0, 1, 0, 0, 0])
 
         assert np.array_equal(vec, expected)
 
@@ -57,7 +60,7 @@ class LocationNNTestCase(unittest.TestCase):
         sentence = 'Take first door on your left'
 
         vec = LocationNN().run(sentence)
-        expected = np.array([0, 1, 0])
+        expected = np.array([0, 1, 0, 0, 0])
 
         assert np.array_equal(vec, expected)
 
@@ -68,7 +71,7 @@ class LocationNNTestCase(unittest.TestCase):
         sentence = 'Go forwards'
 
         vec = LocationNN().run(sentence)
-        expected = np.array([0, 0, 1])
+        expected = np.array([0, 0, 1, 0, 0])
 
         assert np.array_equal(vec, expected)
 
