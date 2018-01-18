@@ -5,13 +5,13 @@ from typing import List
 from collections import Counter
 
 
-def question_labels(data_getter: DataGetter) -> List[np.array]:
-    """
-    :return: the label associated with each question.
-    """
-    ideal_answers = data_getter.location_ideal_answers()
-    labels = [LocationNN().run(answer) for answer in ideal_answers]
-    return labels
+# def question_labels(data_getter: DataGetter) -> List[np.array]:
+#     """
+#     :return: the label associated with each question.
+#     """
+#     ideal_answers = data_getter.location_ideal_answers()
+#     labels = [LocationNN().run(answer) for answer in ideal_answers]
+#     return labels
 
 
 def testing_responses(data_getter: DataGetter) -> List[List[np.array]]:
@@ -47,7 +47,8 @@ def compare(labels: List[np.array], responses: List[List[np.array]]) -> List[flo
 if __name__ == '__main__':
     data_getter = DataGetter()
 
-    labels = question_labels(data_getter)
+    ideal_answers = data_getter.location_ideal_answers()
+    labels = data_getter.location_question_targets()
     answer_responses = testing_responses(data_getter)
 
     modes = [mode_response(answers) for answers in answer_responses]
@@ -58,7 +59,7 @@ if __name__ == '__main__':
 
     for question_num, (label, (mode_vec, mode_count), percentage_correct) in enumerate(zip(labels, modes, percentages_correct)):
         print('Question', question_num)
-        print('\tIdea Answer  :', data_getter.location_ideal_answers()[question_num])
+        print('\tIdea Answer  :', ideal_answers[question_num])
         print('\tLabel        :', label)
         print('\tMode Response:', mode_vec)
         print('\tMode Count   :', mode_count)

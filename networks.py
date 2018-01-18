@@ -113,19 +113,36 @@ class LocationNN():
         words = WordMatch.list_from_words(['forwards', 'backwards'])
         return And(words)
 
+    def stairs_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for stairs, e.g. go upstairs
+        """
+        words = WordMatch.list_from_words(['upstairs', 'downstairs'])
+        return And(words)
+
+    def behind_obj_descriptor(self) -> Descriptor:
+        """
+        :return: a descriptor which produces a high response for going behind an object, e.g. go behind the sofas
+        """
+        return And([WordMatch('behind'), WordTag('NN')])
+
 
     def run(self, input_text: str):
         """
         Returns a tensor:
-        [ Absolute    ]
-        [ Contextual  ]
-        [ Directional ]
+        [ Absolute    ] e.g. Go to room 201
+        [ Contextual  ] e.g. Take the door behind you
+        [ Directional ] e.g. Go forwards a little bit
+        [ Stairs      ] e.g. Go downstairs
+        [ Behind      ] e.g. Go behind the sofas
         """
 
         descriptors = [
             self.absolute_descriptor(),
             self.contextual_descriptor(),
-            self.directional_descriptor()
+            self.directional_descriptor(),
+            self.stairs_descriptor(),
+            self.behind_obj_descriptor()
         ]
 
         return descriptor_vector(descriptors, input_text)

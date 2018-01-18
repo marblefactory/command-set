@@ -1,6 +1,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from typing import List
+import numpy as np
 
 
 class DataGetter():
@@ -30,13 +31,9 @@ class DataGetter():
 
         return question_answers
 
-
     def location_ideal_answers(self) -> List[str]:
         """
-        :return: a list of ideal answers for each question about locations. These can be used to obtain the correct
-                 vector to represent each question, and hence check the performance of the classifier on locations.
-                 The questions can be found here:
-                    https://docs.google.com/forms/d/1aneFYVkj3aK3hPpsC0egHf0fFnNNhcNsxML5NM6GDMk/edit
+        :return: an ideal answer for each question.
         """
         return [
             # Scenario 1
@@ -78,3 +75,79 @@ class DataGetter():
             # Scenario 19
             'go into the boardroom'
         ]
+
+    def location_question_targets(self) -> List[np.array]:
+        """
+        :return: a list of targets for each question about locations. These can be used to check the performance of
+                 the classifier on locations. The questions can be found here:
+                    https://docs.google.com/forms/d/1aneFYVkj3aK3hPpsC0egHf0fFnNNhcNsxML5NM6GDMk/edit
+        """
+
+
+        # Vectors are in the form:
+        # [ Absolute    ] e.g. Go to room 201
+        # [ Contextual  ] e.g. Take the door behind you
+        # [ Directional ] e.g. Go forwards a little bit
+        # [ Stairs      ] e.g. Go downstairs
+        # [ Behind      ] e.g. Go behind the sofas
+
+        vectors = [
+            # Scenario 1, 'go through the door in front of you'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 2, 'take the first door on your right'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 3, 'take the first door on your right'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 4, 'go through the door on your right'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 5, 'go behind the desk'
+            [0, 0, 0, 0, 1],
+
+            # Scenario 6, 'go through the door in front of you then turn left'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 7, 'go around the corridor'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 8, 'take the first door on your left'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 9, 'go to room 2 behind you'
+            [1, 0, 0, 0, 0],
+
+            # Scenario 10, 'go to room 2'
+            [1, 0, 0, 0, 0],
+
+            # Scenario 11, 'take the double doors on your left'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 12, 'go upstairs'
+            [0, 0, 0, 1, 0],
+
+            # Scenario 13, 'go out of the room and then go through the next room on the right'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 14, 'go into the garden'
+            [1, 0, 0, 0, 0],
+
+            # Scenario 15, 'go into the garden behind you'
+            [1, 0, 0, 0, 0],
+
+            # Scenario 16, 'go behind the desk'
+            [0, 0, 0, 0, 1],
+
+            # Scenario 17, 'go behind the sofas'
+            [0, 0, 0, 0, 1],
+
+            # Scenario 18, 'walk forwards a little bit'
+            [0, 1, 0, 0, 0],
+
+            # Scenario 19, 'go into the boardroom'
+            [1, 0, 0, 0, 0],
+        ]
+
+        return [np.array(vec) for vec in vectors]
