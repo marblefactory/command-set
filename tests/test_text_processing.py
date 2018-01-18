@@ -202,13 +202,13 @@ class OneOfDistanceMeasureTestCase(unittest.TestCase):
         assert one_of.normalised_response('a') == 0.5
 
 
-class NotDistanceMeasureTestCase(unittest.TestCase):
+class NoneOfDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests Not
+    Tests NoneOf
     """
 
     def descriptor(self):
-        return Not([WordMatch('hello'), WordMatch('world')])
+        return NoneOf([WordMatch('hello'), WordMatch('world')])
 
     def test_no_response1(self):
         assert self.descriptor().response('hello') == 0
@@ -231,11 +231,11 @@ class NotDistanceMeasureTestCase(unittest.TestCase):
 
 class AllDistanceMeasureTestCase(unittest.TestCase):
     """
-    Tests All
+    Tests AllOf
     """
 
     def descriptor(self):
-        return All(WordMatch.list_from_words(['hello', 'world']))
+        return AllOf(WordMatch.list_from_words(['hello', 'world']))
 
     def test_no_response1(self):
         assert self.descriptor().response('nothing') == 0

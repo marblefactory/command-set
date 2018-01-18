@@ -167,7 +167,7 @@ class And(Descriptor):
         return sum([descriptor.max_response() for descriptor in self.ds])
 
 
-class All(Descriptor):
+class AllOf(Descriptor):
     """
     Matches only if all descriptors match.
     """
@@ -182,6 +182,26 @@ class All(Descriptor):
         responses = [descriptor.response(text) for descriptor in self.ds]
         was_response = [r != 0 for r in responses]
         return float(all(was_response))
+
+    def max_response(self) -> float:
+        return 1
+
+
+class NoneOf(Descriptor):
+    """
+    Matches on the text if the other descriptors don't match, i.e. give a response of zero.
+    """
+
+    def __init__(self, descriptors: List[Descriptor]):
+        self.ds = descriptors
+
+    def response(self, text: str) -> float:
+        """
+        :return: 1 if **all** other descriptors give a response, otherwise 0.
+        """
+        responses = [descriptor.response(text) for descriptor in self.ds]
+        was_response = [r != 0 for r in responses]
+        return float(not any(was_response))
 
     def max_response(self) -> float:
         return 1
@@ -261,22 +281,3 @@ class Number(WordTag):
     def __init__(self):
         super(Number, self).__init__('CD')  # Matches on Cardinal Numbers.
 
-
-class Not(Descriptor):
-    """
-    Matches on the text if the other descriptors don't match, i.e. give a response of zero.
-    """
-
-    def __init__(self, descriptors: List[Descriptor]):
-        self.ds = descriptors
-
-    def response(self, text: str) -> float:
-        """
-        :return: 1 if **all** other descriptors give a response, otherwise 0.
-        """
-        responses = [descriptor.response(text) for descriptor in self.ds]
-        was_response = [r != 0 for r in responses]
-        return float(not any(was_response))
-
-    def max_response(self) -> float:
-        return 1

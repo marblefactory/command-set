@@ -38,7 +38,7 @@ class MovementNN():
         :return: a descriptor which produces a high response for medium/normal movement
                  i.e. when there is no response for slow or fast.
         """
-        return Not([self.slow_descriptor(), self.fast_descriptor()])
+        return NoneOf([self.slow_descriptor(), self.fast_descriptor()])
 
     def fast_descriptor(self) -> Descriptor:
         """
@@ -63,7 +63,7 @@ class MovementNN():
         :return: a descriptor which produces a high response for a standing stance.
                  i.e. when there is no response for prone or crouching.
         """
-        return Not([self.prone_descriptor(), self.crouch_descriptor()])
+        return NoneOf([self.prone_descriptor(), self.crouch_descriptor()])
 
     def run(self, input_text: str):
         """
@@ -98,7 +98,7 @@ class LocationNN():
         """
         :return: a descriptor which produces a high response for absolute locations, e.g. Room 102
         """
-        return All([WordMatch('room'), Number()])
+        return AllOf([WordMatch('room'), Number()])
 
     def contextual_descriptor(self) -> Descriptor:
         """
