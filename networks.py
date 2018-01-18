@@ -135,7 +135,7 @@ class LocationNN():
         """
         :return: a descriptor which produces a high response for going behind an object, e.g. go behind the sofa
         """
-        return And([WordMatch('behind'), WordTag('NN')])
+        return AllOf([WordMatch('behind'), WordTag('NN')])
 
     def run(self, input_text: str):
         """
