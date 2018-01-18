@@ -11,8 +11,6 @@ def descriptor_vector(descriptors: List[Descriptor], text: str) -> np.array:
     responses = [d.response(text) for d in descriptors]
     index = responses.index(max(responses))
 
-    print(responses)
-
     vec = np.zeros(shape=len(descriptors))
     vec[index] = 1
 
@@ -104,8 +102,9 @@ class LocationNN():
         """
         :return: a descriptor which produces a high response for contextual locations, e.g. first door on the left
         """
-        left_right = OneOf([WordMatch('left'), WordMatch('right')])
-        return And([Positional(), WordTag('NN'), left_right])
+        directions = ['left', 'right', 'behind', 'front']
+        one_of = OneOf(WordMatch.list_from_words(directions))
+        return And([Positional(), WordTag('NN'), one_of])
 
     def directional_descriptor(self) -> Descriptor:
         """

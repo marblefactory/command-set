@@ -45,7 +45,7 @@ class WordMatchDistanceMeasureTestCase(unittest.TestCase):
         assert self.descriptor().response('hello world') == 1
 
     def test_multiple(self):
-        assert self.descriptor().response('hello world hello') == 2
+        assert self.descriptor().response('hello world hello') == 1
 
 
 # class WordMeaningDistanceMeasureTestCase(unittest.TestCase):
@@ -63,7 +63,7 @@ class WordMatchDistanceMeasureTestCase(unittest.TestCase):
 #         assert self.descriptor().response('crouching') == 1.0
 #
 #     def test_multiple(self):
-#         assert self.descriptor().response('crouch crouching') == 2.0
+#         assert self.descriptor().response('crouch crouching') == 1.0
 
 
 class AndDistanceMeasureTestCase(unittest.TestCase):
@@ -76,12 +76,13 @@ class AndDistanceMeasureTestCase(unittest.TestCase):
         return And(words)
 
     def test_no_response(self):
+        print(self.descriptor().response('my sentence'))
         assert self.descriptor().response('my sentence') == 0
 
     def test_single(self):
         assert self.descriptor().response('hello sentence') == 1
 
-    def test_single_rorder_invariant(self):
+    def test_single_order_invariant(self):
         assert self.descriptor().response('sentence hello') == 1
 
     def test_multiple(self):

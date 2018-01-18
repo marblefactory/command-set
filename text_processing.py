@@ -91,10 +91,10 @@ class WordMatch(Word):
 
     def response(self, text: str) -> float:
         """
-        :return: the number of occurrences of `word` in the text.
+        :return: 1 if the word is present in the text, otherwise 0.
         """
         matched_words = [w for w in text.split() if w == self.word]
-        return len(matched_words)
+        return float(len(matched_words) >= 1)
 
 
 # class WordMeaning(Word):
@@ -113,7 +113,7 @@ class WordMatch(Word):
 #             maximum = 0
 #             for s1 in synset1:
 #                 for s2 in synset2:
-#                     sim = s1.path_similarity(s2) or 0
+#                     sim = s1.wup_similarity(s2) or 0
 #                     maximum = sim if sim > maximum else maximum
 #
 #             return maximum
@@ -121,7 +121,7 @@ class WordMatch(Word):
 #         word_synsets = wn.synsets(self.word)
 #         sentence_synsets = [wn.synsets(w) for w in text.split()]
 #         similarities = [similarity(word_synsets, synsets) for synsets in sentence_synsets]
-#         return sum(similarities)
+#         return min(similarities)
 
 
 class And(Descriptor):
