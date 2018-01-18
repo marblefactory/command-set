@@ -97,31 +97,31 @@ class WordMatch(Word):
         return len(matched_words)
 
 
-class WordMeaning(Word):
-    """
-    Generates a response based on semantic similarity between words.
-    """
-
-    def __init__(self, word: str):
-        super(WordMeaning, self).__init__(word)
-
-    def response(self, text: str) -> float:
-        def similarity(synset1, synset2) -> float:
-            """
-            :return: the maximum semantic similarity between the two synsets.
-            """
-            maximum = 0
-            for s1 in synset1:
-                for s2 in synset2:
-                    sim = s1.path_similarity(s2) or 0
-                    maximum = sim if sim > maximum else maximum
-
-            return maximum
-
-        word_synsets = wn.synsets(self.word)
-        sentence_synsets = [wn.synsets(w) for w in text.split()]
-        similarities = [similarity(word_synsets, synsets) for synsets in sentence_synsets]
-        return sum(similarities)
+# class WordMeaning(Word):
+#     """
+#     Generates a response based on semantic similarity between words.
+#     """
+#
+#     def __init__(self, word: str):
+#         super(WordMeaning, self).__init__(word)
+#
+#     def response(self, text: str) -> float:
+#         def similarity(synset1, synset2) -> float:
+#             """
+#             :return: the maximum semantic similarity between the two synsets.
+#             """
+#             maximum = 0
+#             for s1 in synset1:
+#                 for s2 in synset2:
+#                     sim = s1.path_similarity(s2) or 0
+#                     maximum = sim if sim > maximum else maximum
+#
+#             return maximum
+#
+#         word_synsets = wn.synsets(self.word)
+#         sentence_synsets = [wn.synsets(w) for w in text.split()]
+#         similarities = [similarity(word_synsets, synsets) for synsets in sentence_synsets]
+#         return sum(similarities)
 
 
 class And(Descriptor):
@@ -139,8 +139,7 @@ class And(Descriptor):
         """
         :return: the average response from all descriptors.
         """
-        l = float(len(self.ds))
-        return sum([descriptor.response(text) / l for descriptor in self.ds])
+        return sum([descriptor.response(text) for descriptor in self.ds])
 
 
 class OneOf(Descriptor):
