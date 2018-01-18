@@ -12,6 +12,9 @@ class MockDescriptor(Descriptor):
     def response(self, text: str) -> float:
         return self.r
 
+    def max_response(self) -> float:
+        return 1
+
 
 class ThresholdDistanceMeasureTestCase(unittest.TestCase):
     """
@@ -28,6 +31,9 @@ class ThresholdDistanceMeasureTestCase(unittest.TestCase):
 
     def test_above_threshold(self):
         assert self.descriptor(0.7).response(' ') == 1
+
+    def test_normalised_response(self):
+        assert self.descriptor(0.7).normalised_response(' ') == 1
 
 
 class WordMatchDistanceMeasureTestCase(unittest.TestCase):
@@ -46,6 +52,9 @@ class WordMatchDistanceMeasureTestCase(unittest.TestCase):
 
     def test_multiple(self):
         assert self.descriptor().response('hello world hello') == 1
+
+    def test_normalised_response(self):
+        assert self.descriptor().normalised_response('hello word') == 1
 
 
 # class WordMeaningDistanceMeasureTestCase(unittest.TestCase):
@@ -94,6 +103,12 @@ class AndDistanceMeasureTestCase(unittest.TestCase):
     def test_extra_word_invariant(self):
         assert self.descriptor().response('hello extra world extra') == 2
 
+    def test_normalised_response(self):
+        assert self.descriptor().normalised_response('hello sentence') == 0.5
+
+    def test_normalised_response_extra_word_invariant(self):
+        assert self.descriptor().normalised_response('hello extra world extra') == 1
+
 
 class PositionalDistanceMeasureTestCase(unittest.TestCase):
     """
@@ -111,6 +126,9 @@ class PositionalDistanceMeasureTestCase(unittest.TestCase):
 
     def test_multiple(self):
         assert self.descriptor().response('take the first second door') == 0
+
+    def test_normalised_response(self):
+        assert self.descriptor().normalised_response('take the first door') == 1
 
 
 class WordTagDistanceMeasureTestCase(unittest.TestCase):
@@ -133,6 +151,9 @@ class WordTagDistanceMeasureTestCase(unittest.TestCase):
     def test_multiple(self):
         assert self.descriptor().response('flying car table') == 1
 
+    def test_normalised_response(self):
+        assert self.descriptor().normalised_response('flying car') == 1
+
 
 class NumberDistanceMeasureTestCase(unittest.TestCase):
     """
@@ -150,6 +171,9 @@ class NumberDistanceMeasureTestCase(unittest.TestCase):
 
     def test_multiple(self):
         assert self.descriptor().response('Room 802 and 700') == 1
+
+    def test_normalised_response(self):
+        assert self.descriptor().normalised_response('105') == 1
 
 
 class OneOfDistanceMeasureTestCase(unittest.TestCase):
@@ -171,6 +195,11 @@ class OneOfDistanceMeasureTestCase(unittest.TestCase):
 
     def test_multiple(self):
         assert self.descriptor().response('go left right') == 0
+
+    def test_normalised_response(self):
+        and_descriptor = And(WordMatch.list_from_words(['a', 'b'])) # Max Response = 2
+        one_of = OneOf([and_descriptor, WordMatch('c')])            # Max Response = 1
+        assert one_of.normalised_response('a') == 0.5
 
 
 class NotDistanceMeasureTestCase(unittest.TestCase):
@@ -195,3 +224,6 @@ class NotDistanceMeasureTestCase(unittest.TestCase):
 
     def test_response_if_empty(self):
         assert self.descriptor().response('') == 1
+
+    def test_normalised_response(self):
+        assert self.descriptor().normalised_response('no matched words') == 1

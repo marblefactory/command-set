@@ -102,9 +102,11 @@ class LocationNN():
         """
         :return: a descriptor which produces a high response for contextual locations, e.g. first door on the left
         """
-        directions = ['left', 'right', 'behind', 'front']
-        one_of = OneOf(WordMatch.list_from_words(directions))
-        return And([Positional(), WordTag('NN'), one_of])
+        direction_words = ['left', 'right', 'behind', 'front']
+        directions = OneOf(WordMatch.list_from_words(direction_words))
+        you = OneOf(WordMatch.list_from_words(['you', 'your']))
+
+        return And([Positional(), WordTag('NN'), directions, you])
 
     def directional_descriptor(self) -> Descriptor:
         """
@@ -125,7 +127,6 @@ class LocationNN():
         :return: a descriptor which produces a high response for going behind an object, e.g. go behind the sofas
         """
         return And([WordMatch('behind'), WordTag('NN')])
-
 
     def run(self, input_text: str):
         """

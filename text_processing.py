@@ -41,9 +41,22 @@ class Descriptor:
 
     def response(self, text: str) -> float:
         """
-        :return: the response of the descriptor on the text.
+        :return: the non-normalised response of the descriptor on the text. I.e. this does not need to be in the
+                 range 0-1. However, it does need to be in the range 0-max_response
         """
         raise NotImplementedError
+
+    def max_response(self) -> int:
+        """
+        :return: the maximum response which the descriptor can give.
+        """
+        raise NotImplementedError
+
+    def normalised_response(self, text: str) -> float:
+        """
+        :return: the response normalised to be in the range 0-1.
+        """
+        return self.response(text) / self.max_response()
 
 
 class Threshold(Descriptor):
@@ -59,6 +72,9 @@ class Threshold(Descriptor):
         :return: the response of the descriptor if the response is over a threshold, otherwise 0.
         """
         return 1 if self.descriptor.response(text) >= self.threshold else 0
+
+    def max_response(self) -> float:
+        return 1
 
 
 class Word(Descriptor):
@@ -95,6 +111,9 @@ class WordMatch(Word):
         """
         matched_words = [w for w in text.split() if w == self.word]
         return float(len(matched_words) >= 1)
+
+    def max_response(self) -> float:
+        return 1
 
 
 # class WordMeaning(Word):
@@ -141,6 +160,12 @@ class And(Descriptor):
         """
         return sum([descriptor.response(text) for descriptor in self.ds])
 
+    def max_response(self) -> float:
+        """
+        :return: the maximum response, i.e. the sum of all maximum responses of all descriptors.
+        """
+        return sum([descriptor.max_response() for descriptor in self.ds])
+
 
 class OneOf(Descriptor):
     """
@@ -168,6 +193,13 @@ class OneOf(Descriptor):
             return responses[-1]
 
         return 0
+
+    def max_response(self) -> float:
+        """
+        :return: a maximum response out of all descriptors, i.e. because only one descriptor can respond.
+        """
+        max_responses = [descriptor.max_response() for descriptor in self.ds]
+        return max(max_responses)
 
 
 class Positional(OneOf):
@@ -197,6 +229,9 @@ class WordTag(Descriptor):
         num_tagged = len(nltk_tagged(self.tag, text))
         return float(num_tagged >= 1)
 
+    def max_response(self) -> float:
+        return 1
+
 
 class Number(WordTag):
     """
@@ -222,3 +257,6 @@ class Not(Descriptor):
         responses = [descriptor.response(text) for descriptor in self.ds]
         was_response = [r != 0 for r in responses]
         return float(not any(was_response))
+
+    def max_response(self) -> float:
+        return 1
