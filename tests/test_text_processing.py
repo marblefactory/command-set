@@ -109,6 +109,12 @@ class AndDistanceMeasureTestCase(unittest.TestCase):
     def test_normalised_response_extra_word_invariant(self):
         assert self.descriptor().normalised_response('hello extra world extra') == 1
 
+    def test_normalised_response_nested(self):
+        and1 = And(WordMatch.list_from_words(['a', 'b']))
+        and2 = And([and1, WordMatch('c')])
+
+        assert and2.normalised_response('a b c') == 1
+
 
 class PositionalDistanceMeasureTestCase(unittest.TestCase):
     """
